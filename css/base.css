@@ -1,0 +1,166 @@
+﻿/* Paleta saúde: azul SUS, azul médico, branco */
+:root {
+  --teal: #005DAA;
+  --teal-light: #0284c7;
+  --blue: #0284c7;
+  --blue-light: #38bdf8;
+  --mint: #e8f2fb;
+  --sky: #f0f9ff;
+  --white: #ffffff;
+  --text: #1e3a5f;
+  --text-muted: #64748b;
+  --shadow: 0 4px 24px rgba(0, 93, 170, 0.12);
+  --brand-gradient: linear-gradient(135deg, var(--sus-blue-dark), var(--sus-blue));
+  --sus-blue: #005DAA;
+  --sus-blue-dark: #003E7E;
+  --cor-otimo: #059669;
+  --entrada-blue: #005DAA;
+  --entrada-blue-mid: #0284c7;
+  --entrada-blue-soft: #3b82c4;
+  --entrada-blue-muted: #1e5a96;
+  --entrada-blue-pale: #e8f2fb;
+  --entrada-blue-gradient: linear-gradient(135deg, var(--sus-blue-dark) 0%, var(--entrada-blue) 45%, var(--entrada-blue-mid) 100%);
+  --header-height: 56px;
+  --sidebar-width: 200px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 14px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  width: 100%;
+  overflow-x: clip;
+}
+
+html.modo-entrada,
+html.modo-entrada body {
+  overflow: hidden;
+  height: 100%;
+}
+
+html.modo-entrada {
+  height: 100dvh;
+}
+
+body {
+  font-family: "DM Sans", system-ui, sans-serif;
+  color: var(--text);
+  background: linear-gradient(180deg, var(--sky) 0%, var(--white) 40%);
+  line-height: 1.6;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+body.modo-entrada {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100dvh;
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--entrada-blue-pale) 0%, var(--white) 48%);
+}
+
+body.modo-entrada .nav,
+body.modo-entrada .app-sidebar,
+body.modo-entrada .app-bottom-bar,
+body.modo-entrada .pdf-drawer-root,
+body.modo-entrada .sim-drawer-root {
+  display: none !important;
+}
+
+body.modo-entrada .footer {
+  display: none;
+}
+
+body.modo-entrada .header {
+  flex-shrink: 0;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  padding: 0.75rem 1.5rem;
+}
+
+body.modo-entrada .header .logo {
+  grid-column: 1;
+  justify-self: center;
+}
+
+body.modo-entrada main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+body.modo-entrada #tela-app {
+  display: none !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+body.modo-app {
+  background: var(--white);
+  overflow: auto;
+  height: auto;
+  min-height: 100vh;
+}
+
+body.modo-app .header {
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  padding: 0.75rem 0;
+}
+
+body.modo-app .header .logo {
+  grid-column: 2;
+  justify-self: center;
+}
+
+body.modo-app #tela-app {
+  display: block;
+  width: 100%;
+  min-height: calc(100vh - var(--header-height));
+}
+
+body.modo-app .app-sidebar:not([hidden]) + .app-main {
+  margin-left: var(--sidebar-width);
+}
+
+body.modo-app .app-sidebar:not([hidden]) {
+  display: flex !important;
+  flex-direction: column;
+}
+
+body.modo-app .tela-app[hidden] {
+  display: none !important;
+}
+
+body.modo-app .footer {
+  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0));
+}
+
+@media (max-width: 768px) {
+  body.modo-app .footer {
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0));
+  }
+}
+
+body.modo-app #tela-entrada {
+  display: none !important;
+}
+

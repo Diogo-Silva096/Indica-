@@ -1,0 +1,11 @@
+{
+  "name": "INDICA — Saúde Bucal",
+  "short_name": "INDICA",
+  "description": "Cálculo dos indicadores odontológicos da Atenção Primária",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f0f9ff",
+  "theme_color": "#005DAA",
+  "lang": "pt-BR",
+  "orientation": "any"
+}

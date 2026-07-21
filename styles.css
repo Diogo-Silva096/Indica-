@@ -1,0 +1,7 @@
+/* INDICA — folha de estilos principal (importa os módulos em ordem) */
+@import url("css/base.css");
+@import url("css/layout.css");
+@import url("css/indicadores.css");
+@import url("css/pdf.css");
+@import url("css/simulador.css");
+@import url("css/responsive.css");

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INDICA — Exemplos de melhorias (mockup)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal: #005DAA;
+      --blue: #0284c7;
+      --mint: #e8f4fc;
+      --sky: #f0f7ff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --white: #fff;
+      --border: #e2e8f0;
+      --ok: #059669;
+      --warn: #d97706;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "DM Sans", system-ui, sans-serif;
+      background: #f8fafc;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .pagina {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+    h1 { font-size: 1.75rem; margin: 0 0 0.35rem; }
+    .lead { color: var(--muted); margin: 0 0 2rem; max-width: 60ch; }
+    section {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.35rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    section h2 {
+      font-size: 1.05rem;
+      margin: 0 0 0.35rem;
+      color: var(--teal);
+    }
+    section p.desc {
+      margin: 0 0 1rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      background: var(--mint);
+      color: var(--teal);
+      margin-bottom: 0.65rem;
+    }
+
+    /* —— Passo 1: Mobile —— */
+    .phone {
+      max-width: 320px;
+      margin: 0 auto;
+      border: 3px solid #334155;
+      border-radius: 28px;
+      overflow: hidden;
+      background: var(--white);
+      box-shadow: 0 12px 40px rgba(30,58,95,0.15);
+    }
+    .phone-head {
+      background: var(--teal);
+      color: white;
+      text-align: center;
+      padding: 0.65rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .phone-body { padding: 0.85rem; min-height: 200px; font-size: 0.82rem; }
+    .phone-bottom {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 2px solid var(--mint);
+      background: var(--white);
+    }
+    .phone-bottom button {
+      border: none;
+      background: none;
+      padding: 0.55rem 0.25rem;
+      font: inherit;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: default;
+    }
+    .phone-bottom button.on { color: var(--teal); background: var(--mint); }
+
+    /* —— Passo 2: Resumo —— */
+    .resumo {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 1fr auto;
+      align-items: start;
+      padding: 1rem;
+      background: linear-gradient(135deg, var(--sky), var(--white));
+      border: 2px solid rgba(0,93,170,0.15);
+      border-radius: 14px;
+    }
+    .resumo-nota { text-align: right; }
+    .resumo-nota strong { font-size: 2rem; color: var(--teal); display: block; line-height: 1; }
+    .resumo-nota span { font-size: 0.8rem; color: var(--muted); }
+    .badge-class {
+      display: inline-block;
+      margin-top: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      background: var(--teal);
+      color: white;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .meses { display: flex; gap: 0.45rem; flex-wrap: wrap; margin-top: 0.65rem; }
+    .mes {
+      padding: 0.35rem 0.55rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+    }
+    .mes.ok { background: #ecfdf5; border-color: #6ee7b7; color: var(--ok); }
+    .mes.pend { background: #fffbeb; border-color: #fcd34d; color: var(--warn); }
+    .falta {
+      margin-top: 0.75rem;
+      padding: 0.55rem 0.75rem;
+      background: #fff7ed;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      border-left: 3px solid var(--warn);
+    }
+
+    /* —— Passo 6: Backup —— */
+    .acoes { display: flex; gap: 0.65rem; flex-wrap: wrap; }
+    .btn {
+      padding: 0.55rem 1rem;
+      border-radius: 10px;
+      font: inherit;
+      font-weight: 600;
+      font-size: 0.88rem;
+      border: 2px solid var(--teal);
+      cursor: default;
+    }
+    .btn-pri { background: var(--teal); color: white; }
+    .btn-sec { background: white; color: var(--teal); }
+
+    /* —— Passo 7: PDF feedback —— */
+    .pdf-feedback {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      font-size: 0.85rem;
+    }
+    .pdf-feedback-head {
+      padding: 0.65rem 0.85rem;
+      background: var(--mint);
+      font-weight: 600;
+    }
+    .pdf-feedback ul { margin: 0; padding: 0.65rem 0.85rem 0.65rem 1.5rem; }
+    .pdf-feedback li.ok { color: var(--ok); }
+    .pdf-feedback li.warn { color: var(--warn); }
+
+    /* —— Passo 8: CSS —— */
+    .tree {
+      font-family: ui-monospace, monospace;
+      font-size: 0.8rem;
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem;
+      border-radius: 10px;
+      line-height: 1.7;
+    }
+    .tree .dir { color: #7dd3fc; }
+    .tree .file { color: #a5f3fc; }
+
+    /* —— Passo 9: Polimentos —— */
+    .lista-polimento { margin: 0; padding-left: 1.2rem; font-size: 0.9rem; }
+    .lista-polimento li { margin-bottom: 0.4rem; }
+
+    .voltar {
+      display: inline-block;
+      margin-top: 1rem;
+      color: var(--teal);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .voltar:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="pagina">
+    <h1>Exemplos visuais — melhorias sugeridas</h1>
+    <p class="lead">Mockups estáticos para os passos que ainda não foram implementados. Os passos 3, 4 e 5 já foram aplicados no código (módulos, constantes unificadas e testes).</p>
+
+  <!-- PASSO 1 -->
+  <section>
+    <span class="tag">Passo 1 · Mobile</span>
+    <h2>Barra inferior no celular (em vez da sidebar)</h2>
+    <p class="desc">No celular, o menu lateral some e três botões fixos embaixo levam aos indicadores, nota e relatório — como um app.</p>
+    <div class="phone">
+      <div class="phone-head">INDICA · SEDE 1</div>
+      <div class="phone-body">
+        <strong>Indicadores da Saúde Bucal</strong><br>
+        Conteúdo principal com scroll. Sidebar oculta.
+      </div>
+      <div class="phone-bottom">
+        <button class="on">Indicadores</button>
+        <button>Nota final</button>
+        <button>Relatório</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASSO 2 -->
+  <section>
+    <span class="tag">Passo 2 · Resumo</span>
+    <h2>Cartão de resumo do quadrimestre</h2>
+    <p class="desc">Logo abaixo do título, um painel mostra a situação geral sem abrir menus.</p>
+    <div class="resumo">
+      <div>
+        <strong>1º Quadrimestre 2026</strong>
+        <div class="meses">
+          <span class="mes ok">Jan ✓</span>
+          <span class="mes ok">Fev ✓</span>
+          <span class="mes ok">Mar ✓</span>
+          <span class="mes pend">Abr —</span>
+        </div>
+        <div class="falta">Falta: <strong>Escovação supervisionada</strong> (manual) e PDF de Abril.</div>
+      </div>
+      <div class="resumo-nota">
+        <strong>6,25</strong>
+        <span>/ 10 estimados</span>
+        <div class="badge-class">Bom</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASSO 6 -->
+  <section>
+    <span class="tag">Passo 6 · Backup</span>
+    <h2>Exportar e importar dados</h2>
+    <p class="desc">Na sidebar ou nas configurações da unidade, botões para salvar/restaurar todo o trabalho do quadrimestre.</p>
+    <div class="acoes">
+      <button class="btn btn-pri">Exportar backup (.json)</button>
+      <button class="btn btn-sec">Importar backup</button>
+    </div>
+    <p class="desc" style="margin-top:0.75rem;margin-bottom:0">Arquivo inclui PDFs importados, escovação, PCO e TOC — útil ao trocar de computador.</p>
+  </section>
+
+  <!-- PASSO 7 -->
+  <section>
+    <span class="tag">Passo 7 · PDF</span>
+    <h2>Feedback claro após importar</h2>
+    <p class="desc">Depois de processar o PDF, lista explícita do que entrou e do que não foi reconhecido.</p>
+    <div class="pdf-feedback">
+      <div class="pdf-feedback-head">Março/2026 — processado com sucesso</div>
+      <ul>
+        <li class="ok">B2 Tratamento concluído — 142 registros</li>
+        <li class="ok">B3 Exodontias — 38 procedimentos</li>
+        <li class="ok">B5 Preventivos — 89 procedimentos</li>
+        <li class="warn">Linha não reconhecida: “CONSULTA ODONTO INICIAL” (verifique o relatório)</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- PASSO 8 -->
+  <section>
+    <span class="tag">Passo 8 · CSS</span>
+    <h2>Organização dos estilos</h2>
+    <p class="desc">Um arquivo único de 6.000+ linhas dividido por área — mais fácil de manter.</p>
+    <pre class="tree"><span class="dir">css/</span>
+├── <span class="file">base.css</span>        <span style="color:#94a3b8">← cores, tipografia, header</span>
+├── <span class="file">layout.css</span>      <span style="color:#94a3b8">← sidebar, bottom bar, drawers</span>
+├── <span class="file">indicadores.css</span> <span style="color:#94a3b8">← abas, painéis, formulários</span>
+├── <span class="file">pdf.css</span>         <span style="color:#94a3b8">← importação e resultados</span>
+└── <span class="file">simulador.css</span>   <span style="color:#94a3b8">← nota final</span></pre>
+  </section>
+
+  <!-- PASSO 9 -->
+  <section>
+    <span class="tag">Passo 9 · Polimentos</span>
+    <h2>Detalhes que melhoram o dia a dia</h2>
+    <ul class="lista-polimento">
+      <li><strong>Nota ao vivo:</strong> drawer da nota atualiza ao importar um PDF.</li>
+      <li><strong>Acessibilidade:</strong> foco volta ao botão ao fechar o painel; Tab não escapa do drawer.</li>
+      <li><strong>simulador.html:</strong> redireciona para o app principal (o drawer já faz o mesmo).</li>
+      <li><strong>Offline (PWA):</strong> página abre mesmo com internet instável na UBS.</li>
+    </ul>
+  </section>
+
+    <a class="voltar" href="index.html">← Voltar ao INDICA</a>
+  </div>
+</body>
+</html>

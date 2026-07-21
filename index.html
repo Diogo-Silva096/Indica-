@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="modo-entrada">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#005DAA">
+  <title>INDICA — Saúde Bucal</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+</head>
+<body class="modo-entrada">
+  <header class="header">
+    <a href="/" class="logo" aria-label="INDICA — página inicial">
+      <span class="logo-text">
+        <span class="logo-indica">INDICA</span>
+        <span class="logo-sus" aria-hidden="true">
+          <svg class="logo-sus-icone" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path class="logo-sus-principal" d="M20.5,0h17v20.5H58v17H37.5V58h-17V37.5H0v-17h20.5V0z"/>
+            <path class="logo-sus-sombra" d="M37.5,20.5v17H20.5L37.5,20.5z"/>
+          </svg>
+        </span>
+      </span>
+    </a>
+  </header>
+
+  <main>
+    <div id="tela-entrada" class="tela tela-entrada">
+      <section class="hero">
+        <h1>Cálculo dos Indicadores da Saúde Bucal</h1>
+        <p>Calcule os seis indicadores odontológicos de forma simples e prática.</p>
+
+        <div class="entrada-card" id="entrada-unidade" data-modo="selecao">
+          <div class="entrada-resumo" id="entrada-resumo" hidden>
+            <dl class="entrada-resumo-dados">
+              <div class="entrada-resumo-item">
+                <dt>Unidade</dt>
+                <dd id="entrada-resumo-nome"></dd>
+              </div>
+              <div class="entrada-resumo-item">
+                <dt>Pop. cadastrada</dt>
+                <dd id="entrada-resumo-pop"></dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="entrada-selecao" id="entrada-selecao">
+            <label for="unidade-select" class="entrada-label">Unidade de atendimento</label>
+            <select id="unidade-select" required>
+              <option value="" disabled selected>Escolha uma unidade...</option>
+              <option value="2824">Sede 1</option>
+              <option value="2045">Sede 2</option>
+              <option value="1710">LAPA</option>
+              <option value="2174">Pirituba</option>
+              <option value="1282">Caetano</option>
+              <option value="1147">Barro Vermelho</option>
+              <option value="561">Extremas</option>
+            </select>
+          </div>
+
+          <p class="unidade-erro" id="unidade-erro" hidden>Selecione uma unidade para continuar.</p>
+          <button type="button" class="btn btn-entrar" id="btn-entrar" disabled>Continuar</button>
+          <button type="button" class="entrada-link" id="btn-usar-outra" hidden>Usar outra unidade</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="tela-app" class="tela tela-app" hidden inert>
+    <aside class="app-sidebar" id="app-sidebar" aria-label="Navegação principal" hidden>
+      <nav class="sidebar-nav">
+        <a href="#indicadores" class="sidebar-item is-active" id="nav-indicadores">
+          <svg class="sidebar-item-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <span class="sidebar-item-label">Indicadores</span>
+        </a>
+        <button type="button" class="sidebar-item" id="sidebar-pdf" aria-expanded="false" aria-controls="pdf-drawer" hidden>
+          <svg class="sidebar-item-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span class="sidebar-item-label">Relatório PDF</span>
+          <span class="sidebar-badge" id="sidebar-pdf-badge" hidden aria-label="Meses importados"></span>
+        </button>
+        <button type="button" class="sidebar-item sidebar-item--nota" id="nav-simulador" aria-expanded="false" aria-controls="sim-drawer" hidden>
+          <svg class="sidebar-item-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+          <span class="sidebar-item-label">Nota final</span>
+        </button>
+      </nav>
+      <div class="sidebar-rodape" id="unidade-ativa" hidden>
+        <div class="sidebar-unidade-info">
+          <p class="sidebar-unidade-item">
+            <span class="sidebar-unidade-label">Unidade</span>
+            <strong id="unidade-ativa-nome"></strong>
+          </p>
+          <p class="sidebar-unidade-item">
+            <span class="sidebar-unidade-label">Pop. cadastrada</span>
+            <strong id="unidade-ativa-pop"></strong>
+          </p>
+        </div>
+        <button type="button" class="sidebar-trocar-btn js-trocar-unidade">Trocar unidade</button>
+      </div>
+    </aside>
+
+    <div class="app-main">
+    <section id="indicadores" class="section section-indicadores">
+      <div class="indicadores-intro">
+        <h2>Indicadores da Saúde Bucal</h2>
+        <p>Selecione um indicador, informe os dados do período e calcule o resultado em poucos passos.</p>
+        <p class="intro-trocar-unidade" id="intro-trocar-unidade" hidden>
+          <button type="button" class="unidade-trocar-btn js-trocar-unidade">Trocar unidade</button>
+        </p>
+      </div>
+
+      <div class="quad-reset" id="quad-reset" hidden>
+        <div class="quad-reset-texto">
+          <p class="quad-reset-titulo">Quadrimestre em acompanhamento</p>
+          <p class="quad-reset-sub" id="quad-reset-periodo">Importe os relatórios mensais do mesmo quadrimestre.</p>
+        </div>
+        <button type="button" class="btn btn-outline quad-reset-btn" id="btn-reiniciar-quadrimestre">Reiniciar quadrimestre</button>
+      </div>
+
+      <section class="pdf-import" id="pdf-import" aria-labelledby="pdf-import-titulo">
+        <div class="pdf-import-card">
+          <div class="pdf-import-head">
+            <span class="pdf-import-icone" aria-hidden="true">&#128196;</span>
+            <div>
+              <h3 class="pdf-import-titulo" id="pdf-import-titulo">Importação automática do relatório (PDF)</h3>
+              <p class="pdf-import-sub">Selecione o relatório de produção exportado do <strong>e-SUS APS</strong>. O sistema lê o arquivo, identifica os procedimentos pelo nome/código e preenche automaticamente os indicadores — exceto a escovação supervisionada. Ao mudar o mês ou o ano, selecione novamente o PDF daquela competência.</p>
+            </div>
+          </div>
+
+          <div class="pdf-import-controles">
+            <div class="pdf-campo">
+              <label for="pdf-mes">1 &middot; Mês de referência do relatório</label>
+              <select id="pdf-mes">
+                <option value="" disabled selected>Selecione o mês...</option>
+                <option value="1">Janeiro</option>
+                <option value="2">Fevereiro</option>
+                <option value="3">Março</option>
+                <option value="4">Abril</option>
+                <option value="5">Maio</option>
+                <option value="6">Junho</option>
+                <option value="7">Julho</option>
+                <option value="8">Agosto</option>
+                <option value="9">Setembro</option>
+                <option value="10">Outubro</option>
+                <option value="11">Novembro</option>
+                <option value="12">Dezembro</option>
+              </select>
+            </div>
+            <div class="pdf-campo pdf-campo--ano">
+              <label for="pdf-ano">2 &middot; Ano</label>
+              <input type="number" id="pdf-ano" min="2020" max="2099" step="1" inputmode="numeric" placeholder="2026">
+            </div>
+            <div class="pdf-campo pdf-campo--file">
+              <label for="pdf-file">3 &middot; Arquivo PDF</label>
+              <input type="file" id="pdf-file" accept="application/pdf,.pdf">
+            </div>
+            <button type="button" class="btn btn-calc pdf-btn" id="pdf-processar">Processar relatório</button>
+          </div>
+
+          <p class="pdf-status" id="pdf-status" hidden role="status"></p>
+          <div class="pdf-conflito" id="pdf-conflito" hidden></div>
+        </div>
+
+        <div class="pdf-banner" id="pdf-banner" hidden aria-live="polite"></div>
+      </section>
+
+      <nav class="indicadores-nav" aria-label="Indicadores odontológicos">
+        <button type="button" class="indicador-tab is-active" data-indicador="pco" aria-selected="true">
+          <span class="tab-num">1</span>
+          <span class="tab-label">Primeira consulta programada</span>
+        </button>
+        <button type="button" class="indicador-tab" data-indicador="toc">
+          <span class="tab-num">2</span>
+          <span class="tab-label">Tratamento concluído</span>
+        </button>
+        <button type="button" class="indicador-tab" data-indicador="escovacao">
+          <span class="tab-num">3</span>
+          <span class="tab-label">Escovação supervisionada</span>
+        </button>
+        <button type="button" class="indicador-tab" data-indicador="preventivos">
+          <span class="tab-num">4</span>
+          <span class="tab-label">Procedimentos individuais preventivos</span>
+        </button>
+        <button type="button" class="indicador-tab" data-indicador="art">
+          <span class="tab-num">5</span>
+          <span class="tab-label">Tratamento restaurador atraumático(ART)</span>
+        </button>
+        <button type="button" class="indicador-tab" data-indicador="exodontias">
+          <span class="tab-num">6</span>
+          <span class="tab-label">Taxa de exodontias</span>
+        </button>
+      </nav>
+
+      <div class="indicadores-paineis">
+        <article class="indicador-painel is-active" id="painel-pco" data-indicador="pco">
+          <header class="painel-header">
+            <h3><span class="painel-num">1.</span> Primeira consulta programada</h3>
+            <p class="painel-resumo">Para Ótimo nos dois indicadores: realize um pouco mais que a meta de primeiras consultas no mês e priorize a conclusão dos tratamentos iniciados.</p>
+            <details class="info-detalhe" data-info-id="painel-pco">
+              <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> Como funciona?</summary>
+              <div class="info-detalhe-corpo">
+                <p>Indicador avaliado <strong>mês a mês</strong>. Busque superar a meta mensal de primeiras consultas e, em seguida, priorize concluir os tratamentos — assim os indicadores 1 e 2 caminham juntos rumo ao <strong>Ótimo</strong>. Os dados podem vir do relatório PDF ou ser informados manualmente nos cards do quadrimestre.</p>
+              </div>
+            </details>
+          </header>
+          <div class="pco-layout toc-layout">
+            <div class="pco-resultado" id="pco-resultado" hidden aria-live="polite"></div>
+
+            <section class="pco-meses-visao" aria-labelledby="pco-meses-visao-titulo">
+              <div class="pco-meses-visao-header">
+                <h4 class="dash-section-titulo" id="pco-meses-visao-titulo">Primeiras consultas no quadrimestre</h4>
+                <details class="info-detalhe info-detalhe--compact">
+                  <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> Sobre esta visão</summary>
+                  <div class="info-detalhe-corpo">
+                    <p>Clique em um mês para ver o detalhe. Use <strong>Editar</strong> no card selecionado para informar ou ajustar os valores (PDF ou digitação manual).</p>
+                  </div>
+                </details>
+              </div>
+              <input type="hidden" id="pco-cadastrados" value="">
+              <div class="pco-meses-grid" id="pco-meses-grid" role="tablist" aria-label="Meses do quadrimestre — primeira consulta"></div>
+            </section>
+          </div>
+        </article>
+
+        <article class="indicador-painel" id="painel-toc" data-indicador="toc" hidden>
+          <header class="painel-header">
+            <h3><span class="painel-num">2.</span> Tratamento odontológico concluído</h3>
+            <details class="info-detalhe" data-info-id="painel-toc">
+              <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> Como funciona?</summary>
+              <div class="info-detalhe-corpo">
+                <p>Indicador com <strong>status mensal</strong> e <strong>acumulado</strong> do quadrimestre. Os dados podem ser importados automaticamente pelo relatório PDF.</p>
+              </div>
+            </details>
+          </header>
+          <div class="toc-layout">
+            <div class="toc-resumo" id="toc-resumo" hidden aria-live="polite"></div>
+
+            <section class="pco-meses-visao" aria-labelledby="toc-meses-visao-titulo">
+              <div class="pco-meses-visao-header">
+                <h4 class="dash-section-titulo" id="toc-meses-visao-titulo">Tratamentos concluídos no quadrimestre</h4>
+                <details class="info-detalhe info-detalhe--compact">
+                  <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> Sobre esta visão</summary>
+                  <div class="info-detalhe-corpo">
+                    <p>Clique em um mês para ver o detalhe. Use <strong>Editar</strong> no card selecionado para informar ou ajustar tratamentos concluídos e primeiras consultas do mês.</p>
+                  </div>
+                </details>
+              </div>
+              <div class="pco-meses-grid" id="toc-meses-grid" role="tablist" aria-label="Meses do quadrimestre — tratamento concluído"></div>
+            </section>
+          </div>
+        </article>
+
+        <article class="indicador-painel" id="painel-escovacao" data-indicador="escovacao" hidden>
+          <header class="painel-header esc-painel-header">
+            <h3 class="esc-painel-titulo">
+              <span class="painel-num">3.</span>
+              <span class="esc-painel-titulo-bloco">
+                Escovação supervisionada
+                <span class="painel-resumo">Classificação do quadrimestre para a nota final</span>
+              </span>
+            </h3>
+          </header>
+
+          <div class="dash-alerta dash-alerta--info esc-aviso" role="note">
+            <span class="dash-alerta-icone" aria-hidden="true">i</span>
+            <div class="dash-alerta-corpo">
+              <p><strong>Este indicador foi simplificado.</strong></p>
+              <p>A escovação supervisionada não vem do PDF do e-SUS. Ao final do quadrimestre, pergunte à <strong>coordenação de saúde bucal</strong> qual foi a classificação da equipe (Regular, Suficiente, Bom ou Ótimo) e clique na opção correspondente abaixo. O INDICA + usa esse resultado para calcular a contribuição na nota final (peso 1).</p>
+            </div>
+          </div>
+
+          <div class="esc-conceito-painel">
+            <h4 class="dash-section-titulo" id="esc-conceito-titulo">Classificação do quadrimestre</h4>
+            <div class="esc-conceito-opcoes" role="radiogroup" aria-labelledby="esc-conceito-titulo" id="esc-conceito-opcoes">
+              <button type="button" class="esc-conceito-btn" data-conceito="regular" style="--cor: #64748b" aria-pressed="false">Regular</button>
+              <button type="button" class="esc-conceito-btn" data-conceito="suficiente" style="--cor: #d97706" aria-pressed="false">Suficiente</button>
+              <button type="button" class="esc-conceito-btn" data-conceito="bom" style="--cor: #0284c7" aria-pressed="false">Bom</button>
+              <button type="button" class="esc-conceito-btn" data-conceito="otimo" style="--cor: #059669" aria-pressed="false">Ótimo</button>
+            </div>
+            <div class="esc-conceito-acoes">
+              <button type="button" class="btn btn-calc" id="esc-conceito-confirmar" disabled>Confirmar classificação</button>
+              <button type="button" class="btn esc-conceito-limpar" id="esc-conceito-limpar" hidden>Limpar</button>
+            </div>
+            <p class="esc-conceito-status" id="esc-conceito-status" aria-live="polite" hidden></p>
+          </div>
+        </article>
+
+        <article class="indicador-painel" id="painel-preventivos" data-indicador="preventivos" hidden>
+          <header class="painel-header">
+            <h3><span class="painel-num">4.</span> Procedimentos odontológicos individuais preventivos</h3>
+            <p class="painel-resumo">Proporção de ações preventivas sobre o total de procedimentos</p>
+            <details class="info-detalhe" data-info-id="painel-preventivos">
+              <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> Como funciona?</summary>
+              <div class="info-detalhe-corpo">
+                <p>Mostra o quanto do trabalho da Equipe de Saúde Bucal (eSB) é voltado para <strong>prevenir</strong> problemas (flúor, selante, orientação, profilaxia) em vez de apenas <strong>tratar</strong> o que já apareceu. É só preencher quantas vezes cada procedimento foi feito no período — a conta é montada sozinha e o resultado aparece já classificado.</p>
+              </div>
+            </details>
+          </header>
+          <div class="b5-layout">
+            <div class="ind-quad-resumo" id="b5-quad-resumo" hidden aria-live="polite"></div>
+            <div class="b5-metas-escala" id="b5-metas-escala" hidden aria-live="polite"></div>
+
+            <section class="pco-meses-visao" aria-labelledby="b5-meses-visao-titulo">
+              <div class="pco-meses-visao-header">
+                <h4 class="dash-section-titulo" id="b5-meses-visao-titulo">Acompanhamento no quadrimestre</h4>
+                <details class="info-detalhe info-detalhe--compact">
+                  <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> Sobre o quadrimestre</summary>
+                  <div class="info-detalhe-corpo">
+                    <p>Termômetro mês a mês a partir dos relatórios PDF importados. A classificação oficial do quadrimestre usa o <strong>acumulado</strong> dos meses. Clique em um mês para ver o detalhe.</p>
+                  </div>
+                </details>
+              </div>
+              <div class="pco-meses-grid" id="b5-meses-grid" role="tablist" aria-label="Meses do quadrimestre — procedimentos preventivos"></div>
+            </section>
+
+            <form class="b5-form" id="b5-form">
+              <div class="b5-filtro">
+                <label class="b5-filtro-toggle">
+                  <input type="checkbox" id="b5-filtro-preenchidos" checked>
+                  <span class="b5-filtro-switch" aria-hidden="true"></span>
+                  <span class="b5-filtro-texto">Mostrar somente procedimentos com produção</span>
+                </label>
+                <details class="info-detalhe info-detalhe--compact">
+                  <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> Sobre o filtro</summary>
+                  <div class="info-detalhe-corpo">
+                    <p>Os procedimentos sem registro ficam ocultos para facilitar a leitura. Desmarque para ver todos e editar.</p>
+                  </div>
+                </details>
+              </div>
+              <div class="b5-grupo">
+                <div class="b5-grupo-header">
+                  <span class="b5-grupo-tag b5-grupo-tag--prev">Conta a favor da prevenção</span>
+                  <h4 class="b5-grupo-titulo">Procedimentos preventivos</h4>
+                  <details class="info-detalhe info-detalhe--compact">
+                    <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> O que entra neste grupo</summary>
+                    <div class="info-detalhe-corpo">
+                      <p>Ações que evitam problemas. Entram na conta de cima e também no total.</p>
+                    </div>
+                  </details>
+                </div>
+                <div class="b5-itens" id="b5-itens-prev"></div>
+              </div>
+
+              <div class="b5-grupo">
+                <div class="b5-grupo-header">
+                  <span class="b5-grupo-tag b5-grupo-tag--outros">Demais procedimentos</span>
+                  <h4 class="b5-grupo-titulo">Demais procedimentos individuais</h4>
+                  <details class="info-detalhe info-detalhe--compact">
+                    <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> O que entra neste grupo</summary>
+                    <div class="info-detalhe-corpo">
+                      <p>Tratamentos curativos, restauradores, periodontais e cirúrgicos. Entram apenas no total.</p>
+                    </div>
+                  </details>
+                </div>
+                <div class="b5-itens" id="b5-itens-outros"></div>
+              </div>
+            </form>
+          </div>
+        </article>
+
+        <article class="indicador-painel" id="painel-art" data-indicador="art" hidden>
+          <header class="painel-header">
+            <h3><span class="painel-num">5.</span> Tratamento Restaurador Atraumático (TRA/ART)</h3>
+            <p class="painel-resumo">Proporção de TRA/ART sobre o total de restaurações</p>
+            <details class="info-detalhe" data-info-id="painel-art">
+              <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> Como funciona?</summary>
+              <div class="info-detalhe-corpo">
+                <p>Mostra o quanto a equipe usa a técnica <strong>minimamente invasiva</strong> (TRA/ART) dentro de tudo o que <strong>restaura o dente</strong>. Basta informar quantas vezes cada restauração foi feita no período — a conta é montada sozinha e o resultado aparece já classificado. Quanto maior a proporção, mais a equipe preserva estrutura dental.</p>
+              </div>
+            </details>
+          </header>
+          <div class="b5-layout">
+            <div class="ind-quad-resumo" id="b6-quad-resumo" hidden aria-live="polite"></div>
+            <div class="b5-metas-escala" id="b6-metas-escala" hidden aria-live="polite"></div>
+
+            <section class="pco-meses-visao" aria-labelledby="b6-meses-visao-titulo">
+              <div class="pco-meses-visao-header">
+                <h4 class="dash-section-titulo" id="b6-meses-visao-titulo">Acompanhamento no quadrimestre</h4>
+                <details class="info-detalhe info-detalhe--compact">
+                  <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> Sobre o quadrimestre</summary>
+                  <div class="info-detalhe-corpo">
+                    <p>Termômetro mês a mês a partir dos relatórios PDF importados. A classificação oficial do quadrimestre usa o <strong>acumulado</strong> dos meses. Clique em um mês para ver o detalhe.</p>
+                  </div>
+                </details>
+              </div>
+              <div class="pco-meses-grid" id="b6-meses-grid" role="tablist" aria-label="Meses do quadrimestre — TRA/ART"></div>
+            </section>
+
+            <form class="b5-form" id="b6-form">
+
+              <ul class="b3-legenda" aria-label="Faixas de classificação do indicador">
+                <li><span class="b3-legenda-dot" style="--cor: #059669"></span> Ótimo: &gt; 8%</li>
+                <li><span class="b3-legenda-dot" style="--cor: #0284c7"></span> Bom: &gt; 6% e ≤ 8%</li>
+                <li><span class="b3-legenda-dot" style="--cor: #d97706"></span> Suficiente: &gt; 3% e ≤ 6%</li>
+                <li><span class="b3-legenda-dot" style="--cor: #64748b"></span> Regular: ≤ 3%</li>
+              </ul>
+
+              <div class="b5-filtro">
+                <label class="b5-filtro-toggle">
+                  <input type="checkbox" id="b6-filtro-preenchidos" checked>
+                  <span class="b5-filtro-switch" aria-hidden="true"></span>
+                  <span class="b5-filtro-texto">Mostrar somente procedimentos com produção</span>
+                </label>
+                <details class="info-detalhe info-detalhe--compact">
+                  <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> Sobre o filtro</summary>
+                  <div class="info-detalhe-corpo">
+                    <p>Os procedimentos sem registro ficam ocultos para facilitar a leitura. Desmarque para ver todos e editar.</p>
+                  </div>
+                </details>
+              </div>
+
+              <div class="b5-grupo">
+                <div class="b5-grupo-header">
+                  <span class="b5-grupo-tag b5-grupo-tag--prev">Conta a favor (numerador)</span>
+                  <h4 class="b5-grupo-titulo">Tratamento Restaurador Atraumático</h4>
+                  <details class="info-detalhe info-detalhe--compact">
+                    <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> O que entra neste grupo</summary>
+                    <div class="info-detalhe-corpo">
+                      <p>A técnica minimamente invasiva. Entra na conta de cima e também no total de restaurações.</p>
+                    </div>
+                  </details>
+                </div>
+                <div class="b5-itens" id="b6-itens-tra"></div>
+              </div>
+
+              <div class="b5-grupo">
+                <div class="b5-grupo-header">
+                  <span class="b5-grupo-tag b5-grupo-tag--outros">Demais procedimentos</span>
+                  <h4 class="b5-grupo-titulo">Demais restaurações</h4>
+                  <details class="info-detalhe info-detalhe--compact">
+                    <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> O que entra neste grupo</summary>
+                    <div class="info-detalhe-corpo">
+                      <p>Restaurações com resina ou ionômero de vidro. Entram apenas no total (denominador).</p>
+                    </div>
+                  </details>
+                </div>
+                <div class="b5-itens" id="b6-itens-outros"></div>
+              </div>
+            </form>
+          </div>
+        </article>
+
+        <article class="indicador-painel" id="painel-exodontias" data-indicador="exodontias" hidden>
+          <header class="painel-header">
+            <h3><span class="painel-num">6.</span> Taxa de exodontias</h3>
+            <details class="info-detalhe" data-info-id="painel-exodontias">
+              <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> Como funciona?</summary>
+              <div class="info-detalhe-corpo">
+                <p>Mostra o quanto da produção da Equipe de Saúde Bucal (eSB) ainda depende de <strong>extrações</strong> em vez de ações que <strong>preservam o dente</strong>. Informe apenas <strong>três totais</strong> do período e o resultado aparece classificado. O ideal fica entre <strong>3% e 10%</strong>.</p>
+              </div>
+            </details>
+          </header>
+          <div class="b3-layout">
+            <div class="ind-quad-resumo" id="b3-quad-resumo" hidden aria-live="polite"></div>
+            <div class="b5-metas-escala" id="b3-metas-escala" hidden aria-live="polite"></div>
+
+            <section class="pco-meses-visao" aria-labelledby="b3-meses-visao-titulo">
+              <div class="pco-meses-visao-header">
+                <h4 class="dash-section-titulo" id="b3-meses-visao-titulo">Acompanhamento no quadrimestre</h4>
+                <details class="info-detalhe info-detalhe--compact">
+                  <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> Sobre o quadrimestre</summary>
+                  <div class="info-detalhe-corpo">
+                    <p>Termômetro mês a mês a partir dos relatórios PDF importados. A classificação oficial do quadrimestre usa o <strong>acumulado</strong> dos meses. Clique em um mês para ver o detalhe.</p>
+                  </div>
+                </details>
+              </div>
+              <div class="pco-meses-grid" id="b3-meses-grid" role="tablist" aria-label="Meses do quadrimestre — taxa de exodontias"></div>
+            </section>
+
+            <form class="b3-form" id="b3-form">
+              <ul class="b3-legenda" aria-label="Faixas de classificação do indicador">
+                <li><span class="b3-legenda-dot" style="--cor: #059669"></span> Ótimo: ≥ 3% e &lt; 10%</li>
+                <li><span class="b3-legenda-dot" style="--cor: #0284c7"></span> Bom: ≥ 10% e &lt; 12%</li>
+                <li><span class="b3-legenda-dot" style="--cor: #d97706"></span> Suficiente: ≥ 12% e &lt; 14%</li>
+                <li><span class="b3-legenda-dot" style="--cor: #64748b"></span> Regular: &lt; 3% ou ≥ 14%</li>
+              </ul>
+
+              <div class="b3-campos">
+                <div class="b3-campo b3-campo--exo">
+                  <div class="b3-campo-label-row">
+                    <label class="b3-campo-label" for="b3-exo">1 · Exodontias realizadas</label>
+                    <details class="info-detalhe info-detalhe--icone">
+                      <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span><span class="info-detalhe-sr">O que entra neste campo</span></summary>
+                      <div class="info-detalhe-corpo">Total de extrações dentárias no período.</div>
+                    </details>
+                  </div>
+                  <input type="number" class="b3-campo-input" id="b3-exo" min="0" step="1" inputmode="numeric" placeholder="Ex.: 18">
+                  <details class="b3-ref">
+                    <summary>Ver códigos que entram aqui</summary>
+                    <ul class="b3-ref-lista" id="b3-ref-exo"></ul>
+                  </details>
+                </div>
+
+                <div class="b3-campo b3-campo--prev">
+                  <div class="b3-campo-label-row">
+                    <label class="b3-campo-label" for="b3-prev">2 · Procedimentos preventivos</label>
+                    <details class="info-detalhe info-detalhe--icone">
+                      <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span><span class="info-detalhe-sr">O que entra neste campo</span></summary>
+                      <div class="info-detalhe-corpo">Total de ações que evitam doenças bucais (flúor, selante, profilaxia…).</div>
+                    </details>
+                  </div>
+                  <input type="number" class="b3-campo-input" id="b3-prev" min="0" step="1" inputmode="numeric" placeholder="Ex.: 120">
+                  <details class="b3-ref">
+                    <summary>Ver códigos que entram aqui</summary>
+                    <ul class="b3-ref-lista" id="b3-ref-prev"></ul>
+                  </details>
+                </div>
+
+                <div class="b3-campo b3-campo--cur">
+                  <div class="b3-campo-label-row">
+                    <label class="b3-campo-label" for="b3-cur">3 · Procedimentos curativos</label>
+                    <details class="info-detalhe info-detalhe--icone">
+                      <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span><span class="info-detalhe-sr">O que entra neste campo</span></summary>
+                      <div class="info-detalhe-corpo">Total de tratamentos que recuperam o dente (restaurações, endodontia, periodontia…).</div>
+                    </details>
+                  </div>
+                  <input type="number" class="b3-campo-input" id="b3-cur" min="0" step="1" inputmode="numeric" placeholder="Ex.: 90">
+                  <details class="b3-ref">
+                    <summary>Ver códigos que entram aqui</summary>
+                    <ul class="b3-ref-lista" id="b3-ref-cur"></ul>
+                  </details>
+                </div>
+              </div>
+            </form>
+          </div>
+        </article>
+      </div>
+
+      <details class="info-detalhe info-detalhe--rodape indicadores-nota">
+        <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> Metodologia e referências</summary>
+        <div class="info-detalhe-corpo">
+          <p>Os cálculos seguem a lógica dos indicadores de saúde bucal da Atenção Primária. Confira sempre a portaria e o manual vigentes do seu município ou estado.</p>
+        </div>
+      </details>
+    </section>
+    </div>
+    </div>
+  </main>
+
+  <div class="sim-drawer-root" id="sim-drawer-root" hidden>
+    <div class="sim-drawer-overlay" id="sim-drawer-overlay" aria-hidden="true"></div>
+    <aside class="sim-drawer" id="sim-drawer" role="dialog" aria-modal="true" aria-labelledby="sim-drawer-titulo">
+      <header class="sim-drawer-head">
+        <div class="sim-drawer-head-inicio">
+          <h2 class="sim-drawer-titulo" id="sim-drawer-titulo">Simular nota final</h2>
+          <p class="sim-drawer-sub">Estimativa do quadrimestre com base nos dados importados ou informados.</p>
+        </div>
+        <button type="button" class="sim-drawer-fechar" id="sim-drawer-fechar" aria-label="Fechar painel">&times;</button>
+      </header>
+      <div class="sim-drawer-body">
+        <div class="sim-drawer-conteudo" id="sim-drawer-conteudo">
+          <div class="sim-zona sim-zona--contexto">
+            <div class="sim-unidade-bar"></div>
+            <section class="sim-status" aria-live="polite"></section>
+          </div>
+          <section class="sim-zona sim-zona--resultado" aria-label="Resumo da pontuação">
+            <section class="sim-hero" aria-live="polite"></section>
+            <section class="sim-tabela-sec">
+              <h2 class="sim-sec-titulo">Detalhamento por indicador (B1 a B6)</h2>
+              <div class="sim-tabela-wrap">
+                <table class="sim-tabela">
+                  <thead>
+                    <tr>
+                      <th scope="col">Ind.</th>
+                      <th scope="col">Indicador</th>
+                      <th scope="col">Resultado</th>
+                      <th scope="col">Conceito</th>
+                      <th scope="col">Pontos</th>
+                      <th scope="col">Peso</th>
+                      <th scope="col">Contribuição</th>
+                    </tr>
+                  </thead>
+                  <tbody class="sim-tabela-corpo"></tbody>
+                  <tfoot class="sim-tabela-rodape"></tfoot>
+                </table>
+              </div>
+            </section>
+          </section>
+          <section class="sim-zona sim-zona--detalhe">
+            <section class="sim-detalhes"></section>
+          </section>
+          <section class="sim-zona sim-zona--referencia">
+            <section class="sim-formula"></section>
+            <p class="sim-disclaimer sim-disclaimer--drawer">
+              Os cálculos seguem a lógica do Componente de Qualidade da eSB (<span class="sim-metodologia"></span>).
+              Trata-se de uma <strong>simulação educativa</strong> — a nota oficial é apurada pelo Siaps com regras que podem diferir dos relatórios PDF importados aqui.
+            </p>
+          </section>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="pdf-drawer-root" id="pdf-drawer-root" hidden>
+    <div class="pdf-drawer-overlay" id="pdf-drawer-overlay" aria-hidden="true"></div>
+    <aside class="pdf-drawer" id="pdf-drawer" role="dialog" aria-modal="true" aria-labelledby="pdf-drawer-titulo">
+      <header class="pdf-drawer-head">
+        <div class="pdf-drawer-head-inicio">
+          <h2 class="pdf-drawer-titulo" id="pdf-drawer-titulo">Indicadores calculados a partir do relatório</h2>
+          <p class="pdf-drawer-competencia" id="pdf-drawer-competencia" hidden></p>
+        </div>
+        <button type="button" class="pdf-drawer-fechar" id="pdf-drawer-fechar" aria-label="Fechar painel">&times;</button>
+      </header>
+      <div class="pdf-drawer-toolbar">
+        <nav class="pdf-drawer-meses" id="pdf-drawer-meses" hidden aria-label="Alternar mês do relatório"></nav>
+      </div>
+      <div class="pdf-drawer-body">
+        <div class="pdf-drawer-layout" id="pdf-drawer-layout" hidden>
+          <nav class="pdf-drawer-indice" id="pdf-drawer-indice" hidden aria-label="Índice dos indicadores do mês"></nav>
+          <div class="pdf-drawer-conteudo" id="pdf-drawer-conteudo">
+            <div class="pdf-resultados" id="pdf-resultados" hidden></div>
+            <details class="pdf-historico-detalhe" id="pdf-historico-detalhe" hidden>
+              <summary class="pdf-historico-sum">Histórico de importações do quadrimestre</summary>
+              <div class="pdf-historico" id="pdf-historico" hidden></div>
+            </details>
+          </div>
+        </div>
+        <p class="pdf-drawer-vazio" id="pdf-drawer-vazio" hidden>Importe um relatório PDF para ver os indicadores calculados automaticamente.</p>
+      </div>
+    </aside>
+  </div>
+
+  <nav class="app-bottom-bar" id="app-bottom-bar" aria-label="Navegação mobile" hidden>
+    <a href="#indicadores" class="bottom-bar-item is-active" id="bottom-indicadores">
+      <svg class="bottom-bar-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Indicadores</span>
+    </a>
+    <button type="button" class="bottom-bar-item" id="bottom-pdf" aria-expanded="false" aria-controls="pdf-drawer" hidden>
+      <svg class="bottom-bar-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>Relatório</span>
+      <span class="sidebar-badge bottom-bar-badge" id="bottom-pdf-badge" hidden aria-label="Meses importados"></span>
+    </button>
+    <button type="button" class="bottom-bar-item bottom-bar-item--nota" id="bottom-nota" aria-expanded="false" aria-controls="sim-drawer" hidden>
+      <svg class="bottom-bar-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+      <span>Nota final</span>
+    </button>
+  </nav>
+
+  <footer class="footer">
+    <p>&copy; 2026 <strong class="logo-marca-inline"><span class="logo-indica">INDICA</span><span class="logo-sus" aria-hidden="true"><svg class="logo-sus-icone" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg"><path class="logo-sus-principal" d="M20.5,0h17v20.5H58v17H37.5V58h-17V37.5H0v-17h20.5V0z"/><path class="logo-sus-sombra" d="M37.5,20.5v17H20.5L37.5,20.5z"/></svg></span></strong>. Todos os direitos reservados.</p>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="simulador-core.js"></script>
+  <script src="drawers.js"></script>
+  <script src="simulador-ui.js"></script>
+  <script src="indicadores.js?v=20260629i"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("sw.js").catch(function () { /* offline opcional */ });
+      });
+    }
+  </script>
+</body>
+</html>

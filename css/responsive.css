@@ -1,0 +1,199 @@
+﻿/* —— Responsivo —— */
+@media (max-width: 768px) {
+  .pdf-import-controles {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .pdf-campo--file {
+    grid-column: 1 / -1;
+  }
+
+  .pdf-btn {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .pdf-banner-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .calc-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .pco-campos {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-status {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .dash-status-class {
+    text-align: center;
+  }
+
+  .dash-metas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dash-media-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-projecao-numeros {
+    gap: 1.25rem;
+  }
+
+  .dash-tempo {
+    flex-wrap: wrap;
+  }
+
+  .dash-tempo-barra {
+    flex: 1 1 100%;
+  }
+
+  .toc-barra-seg-label {
+    font-size: 0.6rem;
+  }
+
+  .pco-metas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pco-hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .pco-hero-class {
+    text-align: center;
+  }
+
+  .toc-meses-nav {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pco-meses-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .toc-faixas {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .toc-resumo-compact {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .toc-form-acoes {
+    flex-direction: column;
+  }
+
+  .toc-form-acoes .btn-calc,
+  .toc-btn-excluir {
+    width: 100%;
+  }
+
+  .indicadores-nav {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-flow: row;
+  }
+
+  .indicador-tab {
+    font-size: 0.95rem;
+  }
+
+  .b5-itens {
+    grid-template-columns: 1fr;
+  }
+
+  .b5-faixas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .b5-acoes {
+    flex-direction: column;
+  }
+
+  .b3-campos {
+    grid-template-columns: 1fr;
+  }
+
+  .b3-faixas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .b3-acoes {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .dash-metas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-situacao-grid {
+    flex-direction: column;
+  }
+
+  .dash-situacao-card {
+    min-width: 0;
+  }
+
+  .b5-faixas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .b5-totais-live {
+    grid-template-columns: 1fr;
+  }
+
+  .pco-metas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .b5-res-total-num {
+    font-size: 1.5rem;
+  }
+
+  .b3-faixas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .b3-totais-live {
+    grid-template-columns: 1fr;
+  }
+
+  .b3-composicao {
+    grid-template-columns: 1fr;
+  }
+
+  .b3-res-total-num {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  body.modo-entrada .header {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: 0;
+    padding: 1rem;
+  }
+
+  body.modo-entrada .header .logo {
+    grid-column: 1;
+    justify-self: center;
+  }
+
+  .logo-text {
+    font-size: 1.5rem;
+  }
+}

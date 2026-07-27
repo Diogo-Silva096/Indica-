@@ -654,6 +654,12 @@ body.modo-entrada .entrada-link:hover {
   fill: rgba(255, 255, 255, 0.35);
 }
 
+.footer-versao {
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
 /* —— App shell: sidebar, drawer, bottom bar —— */
 .app-sidebar {
   position: fixed;

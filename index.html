@@ -4,8 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#005DAA">
+  <meta name="description" content="Cálculo dos indicadores odontológicos da Atenção Primária (APS).">
   <title>INDICA — Saúde Bucal</title>
   <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" sizes="180x180">
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,7 +64,7 @@
             </select>
           </div>
 
-          <p class="unidade-erro" id="unidade-erro" hidden>Selecione uma unidade para continuar.</p>
+          <p class="unidade-erro" id="unidade-erro" hidden>Escolha uma unidade na lista acima para continuar.</p>
           <button type="button" class="btn btn-entrar" id="btn-entrar" disabled>Continuar</button>
           <button type="button" class="entrada-link" id="btn-usar-outra" hidden>Usar outra unidade</button>
         </div>
@@ -323,7 +327,7 @@
                 <details class="info-detalhe info-detalhe--compact">
                   <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> Sobre o filtro</summary>
                   <div class="info-detalhe-corpo">
-                    <p>Os procedimentos sem registro ficam ocultos para facilitar a leitura. Desmarque para ver todos e editar.</p>
+                    <p>Campos vazios ficam ocultos para facilitar a leitura. Valor zero permanece visível para editar. Desmarque para ver todos.</p>
                   </div>
                 </details>
               </div>
@@ -404,7 +408,7 @@
                 <details class="info-detalhe info-detalhe--compact">
                   <summary><span class="info-detalhe-icone" aria-hidden="true">ⓘ</span> Sobre o filtro</summary>
                   <div class="info-detalhe-corpo">
-                    <p>Os procedimentos sem registro ficam ocultos para facilitar a leitura. Desmarque para ver todos e editar.</p>
+                    <p>Campos vazios ficam ocultos para facilitar a leitura. Valor zero permanece visível para editar. Desmarque para ver todos.</p>
                   </div>
                 </details>
               </div>
@@ -638,12 +642,21 @@
 
   <footer class="footer">
     <p>&copy; 2026 <strong class="logo-marca-inline"><span class="logo-indica">INDICA</span><span class="logo-sus" aria-hidden="true"><svg class="logo-sus-icone" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg"><path class="logo-sus-principal" d="M20.5,0h17v20.5H58v17H37.5V58h-17V37.5H0v-17h20.5V0z"/><path class="logo-sus-sombra" d="M37.5,20.5v17H20.5L37.5,20.5z"/></svg></span></strong>. Todos os direitos reservados.</p>
+    <p class="footer-versao">Versão <span id="app-versao"></span></p>
   </footer>
+  <script src="version.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="simulador-core.js"></script>
   <script src="drawers.js"></script>
   <script src="simulador-ui.js"></script>
-  <script src="indicadores.js?v=20260629i"></script>
+  <script src="quadrimestre.js"></script>
+  <script src="pdf-import.js"></script>
+  <script src="unidade.js"></script>
+  <script src="indicadores-pco.js"></script>
+  <script src="indicadores-toc.js"></script>
+  <script src="indicadores-escovacao.js"></script>
+  <script src="indicadores-b456.js"></script>
+  <script src="indicadores.js?v=1.0.0"></script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function () {

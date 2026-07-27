@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="INDICA">
+  <rect width="512" height="512" rx="96" fill="#005DAA"/>
+  <g fill="#FFFFFF" transform="translate(92 92) scale(5.655)">
+    <path d="M20.5,0h17v20.5H58v17H37.5V58h-17V37.5H0v-17h20.5V0z"/>
+  </g>
+  <path fill="#003E7E" opacity="0.45" transform="translate(92 92) scale(5.655)" d="M37.5,20.5v17H20.5L37.5,20.5z"/>
+</svg>

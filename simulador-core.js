@@ -93,6 +93,71 @@
     { id: "b6", codigo: "B6", nome: "Tratamento restaurador atraumático (ART)", peso: 1, tipoClass: "b6", regra: "Acumulado do quadrimestre" },
   ];
 
+  /* Escalas visuais das faixas (mesmos limiares das CLASSIFICACOES). */
+  var ESCALAS_UI = {
+    proporcao: {
+      max: 2,
+      ticks: [0.25, 0.75, 1.25],
+      zonas: [
+        { ini: 0, fim: 0.25, cor: "#64748b", nome: "Regular" },
+        { ini: 0.25, fim: 0.75, cor: "#d97706", nome: "Suficiente" },
+        { ini: 0.75, fim: 1.25, cor: "#0284c7", nome: "Bom" },
+        { ini: 1.25, fim: 2, cor: "#059669", nome: "Ótimo" },
+      ],
+    },
+    toc: {
+      max: 100,
+      ticks: [25, 50, 75],
+      zonas: [
+        { ini: 0, fim: 25, cor: "#64748b", nome: "Regular" },
+        { ini: 25, fim: 50, cor: "#d97706", nome: "Suficiente" },
+        { ini: 50, fim: 75, cor: "#0284c7", nome: "Bom" },
+        { ini: 75, fim: 100, cor: "#059669", nome: "Ótimo" },
+      ],
+    },
+    b3: {
+      max: 20,
+      ticks: [3, 10, 12, 14],
+      zonas: [
+        { ini: 0, fim: 3, cor: "#64748b", nome: "Regular" },
+        { ini: 3, fim: 10, cor: "#059669", nome: "Ótimo" },
+        { ini: 10, fim: 12, cor: "#0284c7", nome: "Bom" },
+        { ini: 12, fim: 14, cor: "#d97706", nome: "Suficiente" },
+        { ini: 14, fim: 20, cor: "#64748b", nome: "Regular" },
+      ],
+    },
+    b5: {
+      max: 100,
+      ticks: [40, 55, 65, 85],
+      zonas: [
+        { ini: 0, fim: 40, cor: "#64748b", nome: "Regular" },
+        { ini: 40, fim: 55, cor: "#d97706", nome: "Suficiente" },
+        { ini: 55, fim: 65, cor: "#0284c7", nome: "Bom" },
+        { ini: 65, fim: 85, cor: "#059669", nome: "Ótimo" },
+        { ini: 85, fim: 100, cor: "#64748b", nome: "Regular" },
+      ],
+    },
+    b6: {
+      max: 12,
+      ticks: [3, 6, 8],
+      zonas: [
+        { ini: 0, fim: 3, cor: "#64748b", nome: "Regular" },
+        { ini: 3, fim: 6, cor: "#d97706", nome: "Suficiente" },
+        { ini: 6, fim: 8, cor: "#0284c7", nome: "Bom" },
+        { ini: 8, fim: 12, cor: "#059669", nome: "Ótimo" },
+      ],
+    },
+  };
+
+  function metasMensaisPco(pop) {
+    return {
+      regular: Math.ceil(pop * 0.0025),
+      suficiente: Math.ceil(pop * 0.0075),
+      bom: Math.ceil(pop * 0.0125),
+      otimo: Math.ceil(pop * 0.0125) + 1,
+    };
+  }
+
   function lerStorage(key) {
     try {
       var raw = localStorage.getItem(key);
@@ -206,12 +271,23 @@
     });
   }
 
+  function mensagemParaAlerta(html) {
+    return String(html || "")
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<\/p>/gi, "\n")
+      .replace(/<[^>]+>/g, "")
+      .replace(/[ \t]+\n/g, "\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }
+
   function mensagemQuadrimestreIncompativel(mesCalendario, ano, quadAtivo) {
     var qNovo = QUADRIMESTRES[quadIndicePorMes(mesCalendario)];
     var qAtivo = QUADRIMESTRES[quadAtivo.indice];
     return "Este relat\u00F3rio \u00E9 de <strong>" + MESES_NOME[mesCalendario - 1] + " de " + ano +
-      "</strong> (" + qNovo.nome + "), mas os dados atuais s\u00E3o do <strong>" + qAtivo.nome +
-      " de " + quadAtivo.ano + "</strong>. Use <strong>Reiniciar quadrimestre</strong> nos indicadores 1 e 2 antes de importar outro per\u00EDodo.";
+      "</strong> (" + qNovo.nome + "), mas o acompanhamento atual \u00E9 do <strong>" + qAtivo.nome +
+      " de " + quadAtivo.ano + "</strong>. " +
+      "Para mudar de per\u00EDodo, use <strong>Reiniciar quadrimestre</strong> e depois importe somente meses do novo quadrimestre.";
   }
 
   function validarQuadrimestreParaSalvar(unidadeData, mesCalendario, ano, quadReferencia) {
@@ -220,7 +296,8 @@
     if (unidadeTemMesesQuad(unidadeData) && !unidadeData._quad) {
       return {
         ok: false,
-        mensagem: "Os dados desta unidade misturam per\u00EDodos diferentes. Use <strong>Reiniciar quadrimestre</strong> nos indicadores 1 e 2 e importe novamente somente meses do mesmo quadrimestre.",
+        mensagem: "Os dados desta unidade misturam per\u00EDodos diferentes. " +
+          "Use <strong>Reiniciar quadrimestre</strong> e importe novamente apenas meses do mesmo quadrimestre.",
       };
     }
 
@@ -699,6 +776,8 @@
   global.IndicaNotaESB = {
     NOTA_ESB: NOTA_ESB,
     INDICADORES_META: INDICADORES_META,
+    CLASSIFICACOES: CLASSIFICACOES,
+    ESCALAS_UI: ESCALAS_UI,
     MESES_NOME: MESES_NOME,
     QUADRIMESTRES: QUADRIMESTRES,
     QUAD_MESES_LABEL: QUAD_MESES_LABEL,
@@ -718,15 +797,22 @@
     limparUnidadeAtiva: limparUnidadeAtiva,
     gravarEscovacao: gravarEscovacao,
     lerEscovacao: function (uid) { return lerStorage(ESC_STORAGE_KEY)[uid] || null; },
+    resolverClassificacaoEscovacao: resolverClassificacaoEscovacao,
+    metasMensaisPco: metasMensaisPco,
     quadIndicePorMes: quadIndicePorMes,
     quadPosicaoNoMes: quadPosicaoNoMes,
     unidadeTemMesesQuad: unidadeTemMesesQuad,
     validarQuadrimestreParaSalvar: validarQuadrimestreParaSalvar,
     aplicarMetaQuad: aplicarMetaQuad,
     mensagemQuadrimestreIncompativel: mensagemQuadrimestreIncompativel,
+    mensagemParaAlerta: mensagemParaAlerta,
     classificarNotaFinal: classificarNotaFinal,
     classificarPco: classificarPco,
     classificarToc: classificarToc,
+    classificarB3: classificarB3,
+    classificarB5: classificarB5,
+    classificarB6: classificarB6,
+    classificarIndicador: classificarIndicador,
     calcularNotaFinal: calcularNotaFinal,
     fmtPct: fmtPct,
     fmtNota: fmtNota,

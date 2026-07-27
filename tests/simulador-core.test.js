@@ -75,6 +75,22 @@ describe("simulador-core — nota final", function () {
     assert.equal(ESB.classificarNotaFinal(2.5).id, "regular");
   });
 
+  test("classificar indicadores usa faixas únicas do core", function () {
+    assert.equal(ESB.classificarPco(0.2), "regular");
+    assert.equal(ESB.classificarPco(1.25), "bom");
+    assert.equal(ESB.classificarPco(1.26), "otimo");
+    assert.equal(ESB.classificarToc(50), "suficiente");
+    assert.equal(ESB.classificarToc(76), "otimo");
+    assert.equal(ESB.classificarB5(70), "otimo");
+    assert.equal(ESB.classificarB5(90), "regular");
+    assert.equal(ESB.classificarB3(5), "otimo");
+    assert.equal(ESB.classificarB3(15), "regular");
+    assert.equal(ESB.classificarB6(9), "otimo");
+    assert.equal(ESB.classificarB6(2), "regular");
+    assert.equal(ESB.classificacaoPorId("b5", "otimo").nome, "Ótimo");
+    assert.ok(ESB.ESCALAS_UI.b5.zonas.length >= 4);
+  });
+
   test("pesos dos indicadores somam 10", function () {
     var pesos = ESB.NOTA_ESB.pesos;
     var total = pesos.b1 + pesos.b2 + pesos.b3 + pesos.b4 + pesos.b5 + pesos.b6;

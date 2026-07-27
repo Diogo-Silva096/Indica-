@@ -1,4 +1,4 @@
-var CACHE = "indica-v1";
+var CACHE = "indica-v1.0.0";
 var ASSETS = [
   "./",
   "./index.html",
@@ -9,11 +9,24 @@ var ASSETS = [
   "./css/pdf.css",
   "./css/simulador.css",
   "./css/responsive.css",
+  "./version.js",
   "./simulador-core.js",
   "./simulador-ui.js",
   "./drawers.js",
+  "./quadrimestre.js",
+  "./pdf-import.js",
+  "./unidade.js",
+  "./indicadores-pco.js",
+  "./indicadores-toc.js",
+  "./indicadores-escovacao.js",
+  "./indicadores-b456.js",
   "./indicadores.js",
   "./manifest.json",
+  "./assets/icon.svg",
+  "./assets/icon-192.png",
+  "./assets/icon-512.png",
+  "./assets/favicon-32.png",
+  "./assets/apple-touch-icon.png",
 ];
 
 self.addEventListener("install", function (e) {

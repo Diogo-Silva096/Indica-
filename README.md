@@ -2,7 +2,7 @@
 
 Calculadora dos **seis indicadores odontológicos** da Atenção Primária (APS), com importação de PDF, visão por quadrimestre e nota final da equipe.
 
-Versão atual: **1.1.0**
+Versão atual: **1.1.1**
 
 ## Para quem é
 

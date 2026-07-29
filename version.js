@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "1.1.0";
+  var VERSION = "1.1.1";
   var label = "v" + VERSION;
 
   if (typeof window !== "undefined") {

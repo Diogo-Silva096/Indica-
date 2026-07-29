@@ -1,4 +1,4 @@
-var CACHE = "indica-v1.1.0";
+var CACHE = "indica-v1.1.1";
 var ASSETS = [
   "./",
   "./index.html",

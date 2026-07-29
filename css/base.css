@@ -127,7 +127,8 @@ body.modo-app .header {
   padding: 0.75rem 0;
 }
 
-body.modo-app .header .logo {
+body.modo-app .header .logo,
+body.modo-app .header-brand {
   grid-column: 2;
   justify-self: center;
 }
@@ -142,9 +143,11 @@ body.modo-app .app-sidebar:not([hidden]) + .app-main {
   margin-left: var(--sidebar-width);
 }
 
-body.modo-app .app-sidebar:not([hidden]) {
-  display: flex !important;
-  flex-direction: column;
+@media (min-width: 769px) {
+  body.modo-app .app-sidebar:not([hidden]) {
+    display: flex !important;
+    flex-direction: column;
+  }
 }
 
 body.modo-app .tela-app[hidden] {
@@ -157,7 +160,7 @@ body.modo-app .footer {
 
 @media (max-width: 768px) {
   body.modo-app .footer {
-    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0));
+    padding-bottom: calc(1.5rem + var(--bottom-bar-height, 3.75rem) + env(safe-area-inset-bottom, 0));
   }
 }
 

@@ -1286,13 +1286,13 @@ body.drawer-aberto {
 
 @media (max-width: 768px) {
   body.modo-app .header {
-    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
-    padding: 0.85rem 0;
+    grid-template-columns: 1fr;
+    padding: 0.75rem 1rem;
   }
 
   body.modo-app .header .logo,
   body.modo-app .header-brand {
-    grid-column: 2;
+    grid-column: 1;
     justify-self: center;
   }
 
@@ -1322,12 +1322,7 @@ body.drawer-aberto {
   }
 }
 
-/* —— Desktop-only (mobile depois) —— */
-.app-bottom-bar,
-.intro-trocar-unidade {
-  display: none !important;
-}
-
+/* —— Shell: sidebar no desktop; barra inferior no mobile —— */
 @media (min-width: 769px) {
   body.modo-app .app-sidebar:not([hidden]) {
     display: flex !important;
@@ -1343,21 +1338,38 @@ body.drawer-aberto {
 @media (max-width: 768px) {
   :root {
     --sidebar-width: 200px;
+    --bottom-bar-height: 3.75rem;
   }
 
+  body.modo-app .app-sidebar,
   body.modo-app .app-sidebar:not([hidden]) {
-    display: flex !important;
-    flex-direction: column;
+    display: none !important;
   }
 
-  body.modo-app .app-sidebar:not([hidden]) + .app-main {
-    margin-left: var(--sidebar-width) !important;
-    padding-bottom: 0 !important;
+  body.modo-app .app-sidebar + .app-main,
+  body.modo-app .app-main {
+    margin-left: 0 !important;
+    padding-bottom: calc(var(--bottom-bar-height) + env(safe-area-inset-bottom, 0)) !important;
     align-items: center;
   }
 
+  body.modo-app .app-bottom-bar:not([hidden]) {
+    display: grid !important;
+  }
+
+  body.modo-app .header {
+    grid-template-columns: 1fr;
+    padding: 0.75rem 1rem;
+  }
+
+  body.modo-app .header .logo,
+  body.modo-app .header-brand {
+    grid-column: 1;
+    justify-self: center;
+  }
+
   body.modo-app .footer {
-    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0)) !important;
+    padding-bottom: calc(1.5rem + var(--bottom-bar-height) + env(safe-area-inset-bottom, 0)) !important;
   }
 
   body.modo-entrada .hero h1 {

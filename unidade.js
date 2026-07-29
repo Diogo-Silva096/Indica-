@@ -85,7 +85,7 @@
 
     function setAppShellVisivel(visivel) {
       if (appSidebar) appSidebar.hidden = !visivel;
-      if (appBottomBar) appBottomBar.hidden = true;
+      if (appBottomBar) appBottomBar.hidden = !visivel;
       if (!visivel) {
         var pdfApi = getPdfApi();
         if (pdfApi && pdfApi.setResultadosVisivel) pdfApi.setResultadosVisivel(false);

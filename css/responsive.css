@@ -197,3 +197,42 @@
     font-size: 1.5rem;
   }
 }
+
+/* Shell mobile: reforço (carrega por último) */
+@media (max-width: 768px) {
+  body.modo-app .app-sidebar,
+  body.modo-app .app-sidebar:not([hidden]) {
+    display: none !important;
+  }
+
+  body.modo-app .app-main {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-bottom: calc(3.75rem + env(safe-area-inset-bottom, 0)) !important;
+  }
+
+  body.modo-app .app-bottom-bar:not([hidden]) {
+    display: grid !important;
+  }
+
+  body.modo-app .header {
+    grid-template-columns: 1fr !important;
+    padding: 0.75rem 3.5rem 0.75rem 1rem !important;
+  }
+
+  body.modo-app .header-brand {
+    grid-column: 1 !important;
+    justify-self: center !important;
+  }
+
+  body.modo-app .header-versao {
+    right: 0.65rem;
+    font-size: 0.65rem;
+    padding: 0.18rem 0.4rem;
+  }
+
+  body.modo-app .logo-text {
+    font-size: 1.35rem;
+  }
+}

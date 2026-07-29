@@ -165,10 +165,13 @@ body.modo-entrada .tela-entrada {
   justify-self: center;
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
 }
 
 .header-versao {
+  position: absolute;
+  right: max(1rem, env(safe-area-inset-right, 0px));
+  top: 50%;
+  transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
   padding: 0.2rem 0.5rem;

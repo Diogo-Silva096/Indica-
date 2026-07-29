@@ -51,6 +51,7 @@
     var pcoMesEditando = null;
 
     var pcoResultado = document.getElementById("pco-resultado");
+    var pcoMetas = document.getElementById("pco-metas");
     var pcoMesesGrid = document.getElementById("pco-meses-grid");
 
     function classificarPco(pct) {
@@ -296,27 +297,13 @@
       pcoMesesGrid.innerHTML = html;
     }
 
-    function renderizarPcoResultado(pop, primeiras, mes) {
+    function renderizarPcoResultado(pop, primeiras) {
       if (!pcoResultado || pop <= 0) return;
 
       var d = calcularResultadoMesPco(pop, primeiras);
       var atual = classificacaoPcoPorId(d.classAtual);
 
-      var html = "";
-
-      html += '<div class="pco-hero" style="--cor: ' + atual.cor + '">';
-      html += '  <div class="pco-hero-main">';
-      html += '    <span class="pco-hero-label">Resultado do ' + PCO_MESES_LABEL[mes - 1] + "</span>";
-      html += '    <p class="pco-hero-pct">' + fmtPct(d.pct) + "</p>";
-      html += '    <p class="pco-hero-detalhe">' + primeiras.toLocaleString("pt-BR") + " primeiras consultas \u00F7 " + pop.toLocaleString("pt-BR") + " popula\u00E7\u00E3o cadastrada</p>";
-      html += "  </div>";
-      html += '  <div class="pco-hero-class">';
-      html += '    <span class="pco-hero-class-label">Classifica\u00E7\u00E3o do m\u00EAs</span>';
-      html += '    <span class="dash-badge" style="--cor: ' + atual.cor + '">' + atual.nome + "</span>";
-      html += "  </div>";
-      html += "</div>";
-
-      html += montarEscalaFaixas({
+      pcoResultado.innerHTML = montarEscalaFaixas({
         pct: d.pct,
         atual: atual,
         max: PCO_ESCALA_MAX,
@@ -324,7 +311,15 @@
         ticks: PCO_ESCALA_TICKS,
         fmtTick: fmtPct,
       });
+      pcoResultado.hidden = false;
 
+      renderizarPcoMetas(d);
+    }
+
+    function renderizarPcoMetas(d) {
+      if (!pcoMetas) return;
+
+      var html = "";
       html += '<section class="pco-secao">';
       html += '  <h4 class="pco-secao-titulo">Metas mensais por classifica\u00E7\u00E3o</h4>';
       html += '  <p class="pco-secao-sub">Quantas primeiras consultas este m\u00EAs para atingir cada faixa.</p>';
@@ -365,8 +360,8 @@
       html += "  </div>";
       html += "</section>";
 
-      pcoResultado.innerHTML = html;
-      pcoResultado.hidden = false;
+      pcoMetas.innerHTML = html;
+      pcoMetas.hidden = false;
     }
 
     function selecionarMesPco(mes) {
@@ -379,10 +374,16 @@
       renderizarPcoMesesGrid(meses, populacaoAtual);
 
       if (registro && populacaoAtual > 0) {
-        renderizarPcoResultado(populacaoAtual, registro.primeiras, mes);
-      } else if (pcoResultado) {
-        pcoResultado.hidden = true;
-        pcoResultado.innerHTML = "";
+        renderizarPcoResultado(populacaoAtual, registro.primeiras);
+      } else {
+        if (pcoResultado) {
+          pcoResultado.hidden = true;
+          pcoResultado.innerHTML = "";
+        }
+        if (pcoMetas) {
+          pcoMetas.hidden = true;
+          pcoMetas.innerHTML = "";
+        }
       }
     }
 

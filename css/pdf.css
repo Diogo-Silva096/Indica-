@@ -280,11 +280,6 @@
   color: var(--text-muted);
 }
 
-.pdf-banner-arquivo a {
-  color: var(--blue);
-  font-weight: 600;
-}
-
 /* Opção mostrar/ocultar indicadores calculados */
 .pdf-resultados-toggle {
   display: block;

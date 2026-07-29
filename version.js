@@ -1,12 +1,14 @@
 (function () {
   "use strict";
 
-  var VERSION = "1.0.0";
+  var VERSION = "1.1.0";
+  var label = "v" + VERSION;
 
   if (typeof window !== "undefined") {
     window.IndicaAppVersion = VERSION;
   }
 
-  var el = document.getElementById("app-versao");
-  if (el) el.textContent = "v" + VERSION;
+  document.querySelectorAll("[data-app-versao]").forEach(function (el) {
+    el.textContent = label;
+  });
 })();

@@ -17,17 +17,20 @@
 </head>
 <body class="modo-entrada">
   <header class="header">
-    <a href="/" class="logo" aria-label="INDICA — página inicial">
-      <span class="logo-text">
-        <span class="logo-indica">INDICA</span>
-        <span class="logo-sus" aria-hidden="true">
-          <svg class="logo-sus-icone" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path class="logo-sus-principal" d="M20.5,0h17v20.5H58v17H37.5V58h-17V37.5H0v-17h20.5V0z"/>
-            <path class="logo-sus-sombra" d="M37.5,20.5v17H20.5L37.5,20.5z"/>
-          </svg>
+    <div class="header-brand">
+      <a href="/" class="logo" aria-label="INDICA — página inicial">
+        <span class="logo-text">
+          <span class="logo-indica">INDICA</span>
+          <span class="logo-sus" aria-hidden="true">
+            <svg class="logo-sus-icone" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path class="logo-sus-principal" d="M20.5,0h17v20.5H58v17H37.5V58h-17V37.5H0v-17h20.5V0z"/>
+              <path class="logo-sus-sombra" d="M37.5,20.5v17H20.5L37.5,20.5z"/>
+            </svg>
+          </span>
         </span>
-      </span>
-    </a>
+      </a>
+      <span class="header-versao" data-app-versao aria-label="Versão do aplicativo"></span>
+    </div>
   </header>
 
   <main>
@@ -223,6 +226,8 @@
               <input type="hidden" id="pco-cadastrados" value="">
               <div class="pco-meses-grid" id="pco-meses-grid" role="tablist" aria-label="Meses do quadrimestre — primeira consulta"></div>
             </section>
+
+            <div class="pco-metas" id="pco-metas" hidden aria-live="polite"></div>
           </div>
         </article>
 
@@ -301,7 +306,6 @@
             </details>
           </header>
           <div class="b5-layout">
-            <div class="ind-quad-resumo" id="b5-quad-resumo" hidden aria-live="polite"></div>
             <div class="b5-metas-escala" id="b5-metas-escala" hidden aria-live="polite"></div>
 
             <section class="pco-meses-visao" aria-labelledby="b5-meses-visao-titulo">
@@ -374,7 +378,6 @@
             </details>
           </header>
           <div class="b5-layout">
-            <div class="ind-quad-resumo" id="b6-quad-resumo" hidden aria-live="polite"></div>
             <div class="b5-metas-escala" id="b6-metas-escala" hidden aria-live="polite"></div>
 
             <section class="pco-meses-visao" aria-labelledby="b6-meses-visao-titulo">
@@ -391,13 +394,6 @@
             </section>
 
             <form class="b5-form" id="b6-form">
-
-              <ul class="b3-legenda" aria-label="Faixas de classificação do indicador">
-                <li><span class="b3-legenda-dot" style="--cor: #059669"></span> Ótimo: &gt; 8%</li>
-                <li><span class="b3-legenda-dot" style="--cor: #0284c7"></span> Bom: &gt; 6% e ≤ 8%</li>
-                <li><span class="b3-legenda-dot" style="--cor: #d97706"></span> Suficiente: &gt; 3% e ≤ 6%</li>
-                <li><span class="b3-legenda-dot" style="--cor: #64748b"></span> Regular: ≤ 3%</li>
-              </ul>
 
               <div class="b5-filtro">
                 <label class="b5-filtro-toggle">
@@ -455,7 +451,6 @@
             </details>
           </header>
           <div class="b3-layout">
-            <div class="ind-quad-resumo" id="b3-quad-resumo" hidden aria-live="polite"></div>
             <div class="b5-metas-escala" id="b3-metas-escala" hidden aria-live="polite"></div>
 
             <section class="pco-meses-visao" aria-labelledby="b3-meses-visao-titulo">
@@ -472,13 +467,6 @@
             </section>
 
             <form class="b3-form" id="b3-form">
-              <ul class="b3-legenda" aria-label="Faixas de classificação do indicador">
-                <li><span class="b3-legenda-dot" style="--cor: #059669"></span> Ótimo: ≥ 3% e &lt; 10%</li>
-                <li><span class="b3-legenda-dot" style="--cor: #0284c7"></span> Bom: ≥ 10% e &lt; 12%</li>
-                <li><span class="b3-legenda-dot" style="--cor: #d97706"></span> Suficiente: ≥ 12% e &lt; 14%</li>
-                <li><span class="b3-legenda-dot" style="--cor: #64748b"></span> Regular: &lt; 3% ou ≥ 14%</li>
-              </ul>
-
               <div class="b3-campos">
                 <div class="b3-campo b3-campo--exo">
                   <div class="b3-campo-label-row">
@@ -642,7 +630,7 @@
 
   <footer class="footer">
     <p>&copy; 2026 <strong class="logo-marca-inline"><span class="logo-indica">INDICA</span><span class="logo-sus" aria-hidden="true"><svg class="logo-sus-icone" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg"><path class="logo-sus-principal" d="M20.5,0h17v20.5H58v17H37.5V58h-17V37.5H0v-17h20.5V0z"/><path class="logo-sus-sombra" d="M37.5,20.5v17H20.5L37.5,20.5z"/></svg></span></strong>. Todos os direitos reservados.</p>
-    <p class="footer-versao">Versão <span id="app-versao"></span></p>
+    <p class="footer-versao">Versão <span data-app-versao></span></p>
   </footer>
   <script src="version.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -656,7 +644,7 @@
   <script src="indicadores-toc.js"></script>
   <script src="indicadores-escovacao.js"></script>
   <script src="indicadores-b456.js"></script>
-  <script src="indicadores.js?v=1.0.0"></script>
+  <script src="indicadores.js?v=1.1.0"></script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function () {

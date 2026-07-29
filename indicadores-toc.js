@@ -415,18 +415,6 @@
       var quadrimestreFechado = !!meses[4];
       var html = "";
 
-      html += '<div class="dash-status" style="--cor-status: ' + cls.cor + '">';
-      html += '  <div class="dash-status-main">';
-      html += '    <span class="dash-status-label">Tratamentos conclu\u00EDdos \u00F7 1\u00AA consulta \u2014 ' + TOC_MESES_LABEL[mesStatus - 1] + "</span>";
-      html += '    <p class="dash-status-pct">' + (statusMes.pctMes !== null ? fmtPct(statusMes.pctMes) : "\u2014") + "</p>";
-      html += '    <p class="toc-resumo-totais">' + dadosMes.concluidos.toLocaleString("pt-BR") + " trat. conclu\u00EDdos \u00B7 " + dadosMes.primeiraConsulta.toLocaleString("pt-BR") + " primeiras consultas</p>";
-      html += "  </div>";
-      html += '  <div class="dash-status-class">';
-      html += '    <span class="dash-status-label">Classifica\u00E7\u00E3o do m\u00EAs</span>';
-      html += '    <span class="dash-badge" style="--cor: ' + cls.cor + '">' + cls.nome + "</span>";
-      html += "  </div>";
-      html += "</div>";
-
       if (statusMes.pctMes !== null) {
         html += montarEscalaFaixas({
           pct: statusMes.pctMes,
@@ -434,7 +422,6 @@
           max: TOC_ESCALA_MAX,
           zonas: TOC_ESCALA_ZONAS,
           ticks: [25, 50, 75],
-          titulo: "Classifica\u00E7\u00E3o do m\u00EAs",
         });
       }
 

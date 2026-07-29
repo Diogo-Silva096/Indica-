@@ -13,11 +13,8 @@
         /* ===== ACOMPANHAMENTO QUADRIMESTRAL — INDICADORES 4, 5 E 6 ===== */
         
         var b5MesesGrid = document.getElementById("b5-meses-grid");
-        var b5QuadResumo = document.getElementById("b5-quad-resumo");
         var b6MesesGrid = document.getElementById("b6-meses-grid");
-        var b6QuadResumo = document.getElementById("b6-quad-resumo");
         var b3MesesGrid = document.getElementById("b3-meses-grid");
-        var b3QuadResumo = document.getElementById("b3-quad-resumo");
         
         var b5MesAtual = 1;
         var b5MesOverride = null;
@@ -188,15 +185,12 @@
             var meses = pacote.meses;
             if (origem !== "b5") {
               renderizarB5MesesGrid(meses);
-              if (typeof renderizarQuadResumoB5 === "function") renderizarQuadResumoB5(meses, b5MesAtual);
             }
             if (origem !== "b6") {
               renderizarB6MesesGrid(meses);
-              if (typeof renderizarQuadResumoB6 === "function") renderizarQuadResumoB6(meses, b6MesAtual);
             }
             if (origem !== "b3") {
               renderizarB3MesesGrid(meses);
-              if (typeof renderizarQuadResumoB3 === "function") renderizarQuadResumoB3(meses, b3MesAtual);
             }
           });
         }
@@ -443,43 +437,6 @@
           return res;
         }
         
-        function badgeClassGenerico(classId, classificacaoFn) {
-          var c = classificacaoFn(classId);
-          if (!c) return "";
-          return '<span class="badge-class" style="--cor: ' + c.cor + '">' + c.nome + "</span>";
-        }
-        
-        function montarHtmlQuadResumoB5(mesSel, met, editado) {
-          var classMes = classificarB5(met.pct);
-          var cls = classificacaoB5PorId(classMes);
-          var label = "Acompanhamento mensal \u2014 " + QUAD_MESES_LABEL[mesSel - 1];
-          if (editado) label += " \u00B7 valores editados";
-        
-          var html = '<div class="toc-resumo-compact ind-quad-resumo-inner" style="--cor-status: ' + cls.cor + '">';
-          html += '  <div class="toc-resumo-bloco">';
-          html += '    <span class="toc-resumo-bloco-label">' + label + "</span>";
-          html += '    <span class="toc-resumo-bloco-pct">' + fmtPct(met.pct) + "</span>";
-          html += badgeClassGenerico(classMes, classificacaoB5PorId);
-          html += '    <p class="toc-resumo-dica-texto">' + met.numerador.toLocaleString("pt-BR") + " preventivos \u00F7 " + met.denominador.toLocaleString("pt-BR") + " procedimentos individuais</p>";
-          html += "  </div>";
-          html += "</div>";
-          return html;
-        }
-        
-        function renderizarQuadResumoB5(meses, mesSel) {
-          if (!b5QuadResumo) return;
-          var reg = meses[mesSel];
-          var met = reg ? metricasB5DeDados(reg.dados) : null;
-          if (!met) {
-            b5QuadResumo.hidden = true;
-            b5QuadResumo.innerHTML = "";
-            return;
-          }
-        
-          b5QuadResumo.innerHTML = montarHtmlQuadResumoB5(mesSel, met, false);
-          b5QuadResumo.hidden = false;
-        }
-        
         function b5FormDiferenteDoPdf() {
           var metForm = metricasB5DeForm();
           if (!metForm) return false;
@@ -506,54 +463,12 @@
           var meses = pacote ? pacote.meses : { 1: null, 2: null, 3: null, 4: null };
         
           if (metForm) {
-            if (b5QuadResumo) {
-              b5QuadResumo.innerHTML = montarHtmlQuadResumoB5(b5MesAtual, metForm, editado);
-              b5QuadResumo.hidden = false;
-            }
             renderizarB5MesesGrid(meses, editado ? b5MesAtual : null, editado ? metForm : null);
             return;
           }
         
           b5MesOverride = null;
-          var reg = meses[b5MesAtual];
-          if (reg && metricasB5DeDados(reg.dados)) {
-            renderizarQuadResumoB5(meses, b5MesAtual);
-          } else if (b5QuadResumo) {
-            b5QuadResumo.hidden = true;
-            b5QuadResumo.innerHTML = "";
-          }
           renderizarB5MesesGrid(meses);
-        }
-        
-        function renderizarQuadResumoB6(meses, mesSel) {
-          if (!b6QuadResumo) return;
-          var reg = meses[mesSel];
-          var met = reg ? metricasB6DeDados(reg.dados) : null;
-          if (!met) {
-            b6QuadResumo.hidden = true;
-            b6QuadResumo.innerHTML = "";
-            return;
-          }
-        
-          b6QuadResumo.innerHTML = montarHtmlQuadResumoB6(mesSel, met, false);
-          b6QuadResumo.hidden = false;
-        }
-        
-        function montarHtmlQuadResumoB6(mesSel, met, editado) {
-          var classMes = classificarB6(met.pct);
-          var cls = classificacaoB6PorId(classMes);
-          var label = "Acompanhamento mensal \u2014 " + QUAD_MESES_LABEL[mesSel - 1];
-          if (editado) label += " \u00B7 valores editados";
-        
-          var html = '<div class="toc-resumo-compact ind-quad-resumo-inner" style="--cor-status: ' + cls.cor + '">';
-          html += '  <div class="toc-resumo-bloco">';
-          html += '    <span class="toc-resumo-bloco-label">' + label + "</span>";
-          html += '    <span class="toc-resumo-bloco-pct">' + fmtPct(met.pct) + "</span>";
-          html += badgeClassGenerico(classMes, classificacaoB6PorId);
-          html += '    <p class="toc-resumo-dica-texto">' + met.numerador.toLocaleString("pt-BR") + " TRA/ART \u00F7 " + met.denominador.toLocaleString("pt-BR") + " restaura\u00E7\u00F5es</p>";
-          html += "  </div>";
-          html += "</div>";
-          return html;
         }
         
         function b6FormDiferenteDoPdf() {
@@ -582,54 +497,12 @@
           var meses = pacote ? pacote.meses : { 1: null, 2: null, 3: null, 4: null };
         
           if (metForm) {
-            if (b6QuadResumo) {
-              b6QuadResumo.innerHTML = montarHtmlQuadResumoB6(b6MesAtual, metForm, editado);
-              b6QuadResumo.hidden = false;
-            }
             renderizarB6MesesGrid(meses, editado ? b6MesAtual : null, editado ? metForm : null);
             return;
           }
         
           b6MesOverride = null;
-          var reg = meses[b6MesAtual];
-          if (reg && metricasB6DeDados(reg.dados)) {
-            renderizarQuadResumoB6(meses, b6MesAtual);
-          } else if (b6QuadResumo) {
-            b6QuadResumo.hidden = true;
-            b6QuadResumo.innerHTML = "";
-          }
           renderizarB6MesesGrid(meses);
-        }
-        
-        function montarHtmlQuadResumoB3(mesSel, met, editado) {
-          var classMes = classificarB3(met.pct);
-          var cls = classificacaoB3PorId(classMes);
-          var label = "Acompanhamento mensal \u2014 " + QUAD_MESES_LABEL[mesSel - 1];
-          if (editado) label += " \u00B7 valores editados";
-        
-          var html = '<div class="toc-resumo-compact ind-quad-resumo-inner" style="--cor-status: ' + cls.cor + '">';
-          html += '  <div class="toc-resumo-bloco">';
-          html += '    <span class="toc-resumo-bloco-label">' + label + "</span>";
-          html += '    <span class="toc-resumo-bloco-pct">' + fmtPct(met.pct) + "</span>";
-          html += badgeClassGenerico(classMes, classificacaoB3PorId);
-          html += '    <p class="toc-resumo-dica-texto">' + met.exodontias.toLocaleString("pt-BR") + " exodontias \u00F7 " + met.denominador.toLocaleString("pt-BR") + " procedimentos</p>";
-          html += "  </div>";
-          html += "</div>";
-          return html;
-        }
-        
-        function renderizarQuadResumoB3(meses, mesSel) {
-          if (!b3QuadResumo) return;
-          var reg = meses[mesSel];
-          var met = reg ? metricasB3DeDados(reg.dados) : null;
-          if (!met) {
-            b3QuadResumo.hidden = true;
-            b3QuadResumo.innerHTML = "";
-            return;
-          }
-        
-          b3QuadResumo.innerHTML = montarHtmlQuadResumoB3(mesSel, met, false);
-          b3QuadResumo.hidden = false;
         }
         
         function b3FormDiferenteDoPdf() {
@@ -660,22 +533,11 @@
           var meses = pacote ? pacote.meses : { 1: null, 2: null, 3: null, 4: null };
         
           if (metForm) {
-            if (b3QuadResumo) {
-              b3QuadResumo.innerHTML = montarHtmlQuadResumoB3(b3MesAtual, metForm, editado);
-              b3QuadResumo.hidden = false;
-            }
             renderizarB3MesesGrid(meses, editado ? b3MesAtual : null, editado ? metForm : null);
             return;
           }
         
           b3MesOverride = null;
-          var reg = meses[b3MesAtual];
-          if (reg && metricasB3DeDados(reg.dados)) {
-            renderizarQuadResumoB3(meses, b3MesAtual);
-          } else if (b3QuadResumo) {
-            b3QuadResumo.hidden = true;
-            b3QuadResumo.innerHTML = "";
-          }
           renderizarB3MesesGrid(meses);
         }
         
@@ -685,8 +547,6 @@
           if (typeof renderizarMetasB5 === "function") renderizarMetasB5();
           var pacote = quadUnidadeId ? obterRegistrosQuadPdf(quadUnidadeId) : null;
           var meses = pacote ? pacote.meses : { 1: null, 2: null, 3: null, 4: null };
-          if (pacote) renderizarQuadResumoB5(meses, b5MesAtual);
-          else if (b5QuadResumo) { b5QuadResumo.hidden = true; b5QuadResumo.innerHTML = ""; }
           renderizarB5MesesGrid(meses);
         }
 
@@ -695,8 +555,6 @@
           if (typeof renderizarMetasB6 === "function") renderizarMetasB6();
           var pacote = quadUnidadeId ? obterRegistrosQuadPdf(quadUnidadeId) : null;
           var meses = pacote ? pacote.meses : { 1: null, 2: null, 3: null, 4: null };
-          if (pacote) renderizarQuadResumoB6(meses, b6MesAtual);
-          else if (b6QuadResumo) { b6QuadResumo.hidden = true; b6QuadResumo.innerHTML = ""; }
           renderizarB6MesesGrid(meses);
         }
 
@@ -705,8 +563,6 @@
           if (typeof renderizarMetasB3 === "function") renderizarMetasB3();
           var pacote = quadUnidadeId ? obterRegistrosQuadPdf(quadUnidadeId) : null;
           var meses = pacote ? pacote.meses : { 1: null, 2: null, 3: null, 4: null };
-          if (pacote) renderizarQuadResumoB3(meses, b3MesAtual);
-          else if (b3QuadResumo) { b3QuadResumo.hidden = true; b3QuadResumo.innerHTML = ""; }
           renderizarB3MesesGrid(meses);
         }
 
@@ -994,9 +850,6 @@
           b6MesOverride = null;
           b3MesAtual = 1;
           b3MesOverride = null;
-          if (b5QuadResumo) { b5QuadResumo.hidden = true; b5QuadResumo.innerHTML = ""; }
-          if (b6QuadResumo) { b6QuadResumo.hidden = true; b6QuadResumo.innerHTML = ""; }
-          if (b3QuadResumo) { b3QuadResumo.hidden = true; b3QuadResumo.innerHTML = ""; }
           var vazio = { 1: null, 2: null, 3: null, 4: null };
           if (b5MesesGrid) renderizarB5MesesGrid(vazio);
           if (b6MesesGrid) renderizarB6MesesGrid(vazio);

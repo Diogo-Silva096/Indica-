@@ -740,9 +740,7 @@
           var pos = pdfPosicaoNoQuadrimestre(mes);
           var arq = "";
           if (registro.arquivo && registro.arquivo.nome) {
-            arq = registro.arquivo.dataUrl
-              ? '<p class="pdf-banner-arquivo">Arquivo importado: <strong>' + escHtml(registro.arquivo.nome) + '</strong> \u2014 <a href="' + registro.arquivo.dataUrl + '" target="_blank" rel="noopener">abrir PDF</a></p>'
-              : '<p class="pdf-banner-arquivo">Arquivo importado: <strong>' + escHtml(registro.arquivo.nome) + "</strong></p>";
+            arq = '<p class="pdf-banner-arquivo">Arquivo importado: <strong>' + escHtml(registro.arquivo.nome) + "</strong></p>";
           }
           pdfBannerEl.innerHTML =
             '<span class="pdf-banner-tag">\u2713 Relat\u00F3rio processado com sucesso</span>' +
@@ -1259,7 +1257,16 @@
         function pdfRegistrarArquivoSelecionado() {
           var mes = Number(pdfMesSel && pdfMesSel.value);
           var ano = Number(pdfAnoInput && pdfAnoInput.value) || new Date().getFullYear();
-          if (pdfFileInput && pdfFileInput.files && pdfFileInput.files[0] && mes) {
+          var temArquivo = pdfFileInput && pdfFileInput.files && pdfFileInput.files[0];
+
+          if (temArquivo && !mes) {
+            pdfResetarArquivoImportacao(
+              "Selecione primeiro o <strong>m\u00EAs</strong> (passo 1) e confira o <strong>ano</strong> (passo 2). Depois escolha o PDF do relat\u00F3rio."
+            );
+            return;
+          }
+
+          if (temArquivo && mes) {
             pdfArquivoCompetencia = { mes: mes, ano: ano };
           } else {
             pdfArquivoCompetencia = null;
@@ -1420,12 +1427,9 @@
             }
         
             etapa = "anexo do arquivo";
-            var dataUrl = null;
-            try { if (file.size <= 1.5 * 1024 * 1024) dataUrl = await pdfLerArquivo(file, "dataurl"); } catch (e) { dataUrl = null; }
-        
             pdfPendente = {
               mes: mes, ano: ano, dados: dados, populacao: populacaoAtual,
-              arquivo: { nome: file.name, tamanho: file.size, dataUrl: dataUrl },
+              arquivo: { nome: file.name, tamanho: file.size, dataUrl: null },
             };
         
             var existente = (pdfLerStore()[pdfUnidadeId] || {})[mes];

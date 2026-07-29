@@ -160,6 +160,29 @@ body.modo-entrada .tela-entrada {
   justify-self: center;
 }
 
+.header-brand {
+  grid-column: 2;
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.header-versao {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 93, 170, 0.18);
+  background: rgba(0, 93, 170, 0.06);
+  color: var(--sus-blue);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
 main {
   padding-top: var(--header-height);
 }
@@ -1264,7 +1287,8 @@ body.drawer-aberto {
     padding: 0.85rem 0;
   }
 
-  body.modo-app .header .logo {
+  body.modo-app .header .logo,
+  body.modo-app .header-brand {
     grid-column: 2;
     justify-self: center;
   }

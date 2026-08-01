@@ -150,9 +150,11 @@
     return { numerador: s.numerador, denominador: s.denominador, pct: (s.numerador / s.denominador) * 100 };
   }
 
-  function renderizarMetasB5() {
+  function renderizarMetasB5(metOverride) {
     if (!b5MetasEscala) return;
-    var s = somarB5();
+    var s = metOverride && metOverride.denominador > 0
+      ? { numerador: metOverride.numerador, denominador: metOverride.denominador }
+      : somarB5();
 
     if (s.denominador <= 0) {
       b5MetasEscala.hidden = true;
@@ -554,9 +556,11 @@
     };
   }
 
-  function renderizarMetasB6() {
+  function renderizarMetasB6(metOverride) {
     if (!b6MetasEscala) return;
-    var met = metricasB6DeForm();
+    var met = metOverride && metOverride.denominador > 0
+      ? metOverride
+      : metricasB6DeForm();
 
     if (!met) {
       b6MetasEscala.hidden = true;
@@ -564,11 +568,12 @@
       return;
     }
 
-    var classId = classificarB6(met.pct);
+    var classId = classificarB6(met.pct != null ? met.pct : (met.numerador / met.denominador) * 100);
     var atual = classificacaoB6PorId(classId);
+    var pct = met.pct != null ? met.pct : (met.numerador / met.denominador) * 100;
 
     b6MetasEscala.innerHTML = montarEscalaFaixas({
-      pct: met.pct,
+      pct: pct,
       atual: atual,
       max: B6_ESCALA_MAX,
       zonas: B6_ESCALA_ZONAS,

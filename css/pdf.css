@@ -907,3 +907,110 @@ a.pdf-indice-item:hover {
   border: 1px solid color-mix(in srgb, var(--cor, var(--teal)) 28%, white);
 }
 
+/* —— Conferência SIAPS (reusa visual do import PDF) —— */
+.siaps-drawer-body {
+  overflow: auto;
+  padding: 1.25rem clamp(1rem, 3vw, 2rem) 2rem;
+}
+
+.siaps-ajuda {
+  margin: 0 0 1rem;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.65);
+  border-radius: 10px;
+  border: 1px solid rgba(0, 93, 170, 0.12);
+}
+
+.siaps-competencia {
+  margin: 0.35rem 0 0;
+  padding: 0.65rem 0.85rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--teal, #005daa);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 93, 170, 0.18);
+  border-radius: 10px;
+}
+
+.siaps-competencia.is-vazio {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #92400e;
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.pdf-campo-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.siaps-preview {
+  margin-top: 1rem;
+}
+
+.siaps-preview-card {
+  background: var(--white);
+  border: 1px solid rgba(0, 93, 170, 0.18);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+}
+
+.siaps-preview-titulo {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.siaps-preview-sub {
+  margin: 0 0 0.85rem;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.siaps-preview-lista {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.siaps-preview-lista li {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.siaps-preview-lista p {
+  margin: 0.25rem 0 0;
+}
+
+.siaps-preview-arq {
+  font-weight: 500;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.siaps-preview-aviso {
+  color: #b45309;
+}
+
+.siaps-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.siaps-btn-limpar {
+  background: transparent;
+  border: 1px solid rgba(0, 93, 170, 0.25);
+  color: var(--teal);
+}
+

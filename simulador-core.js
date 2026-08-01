@@ -33,6 +33,91 @@
     "561": "EXTREMAS",
   };
 
+  /* CNES/INE internos — uso no cruzamento SIAPS; não exibir na UI de escolha. */
+  var UNIDADES_IDS = {
+    "2824": { cnes: "2478455", ine: "0001873628" },
+    "2045": { cnes: "7629192", ine: "0002316323" },
+    "1710": { cnes: "2478447", ine: "0001873652" },
+    "2174": { cnes: "2478463", ine: "0001873644" },
+    "1282": { cnes: "2724812", ine: "0001873636" },
+    "1147": { cnes: "2724693", ine: "0002475499" },
+    "561": { cnes: "2725037", ine: "0002385996" },
+  };
+
+  function normalizarDigitosId(valor) {
+    return String(valor == null ? "" : valor).replace(/\D/g, "");
+  }
+
+  function obterIdsUnidade(unidadeId) {
+    return UNIDADES_IDS[String(unidadeId)] || null;
+  }
+
+  function obterUnidadePorCnes(cnes) {
+    var alvo = normalizarDigitosId(cnes);
+    if (!alvo) return null;
+    for (var id in UNIDADES_IDS) {
+      if (!Object.prototype.hasOwnProperty.call(UNIDADES_IDS, id)) continue;
+      if (normalizarDigitosId(UNIDADES_IDS[id].cnes) === alvo) return id;
+    }
+    return null;
+  }
+
+  function obterUnidadePorIne(ine) {
+    var alvo = normalizarDigitosId(ine);
+    if (!alvo) return null;
+    for (var id in UNIDADES_IDS) {
+      if (!Object.prototype.hasOwnProperty.call(UNIDADES_IDS, id)) continue;
+      if (normalizarDigitosId(UNIDADES_IDS[id].ine) === alvo) return id;
+    }
+    return null;
+  }
+
+  function formatarDataSiaps(iso) {
+    if (!iso) return "";
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    return d.toLocaleDateString("pt-BR");
+  }
+
+  function htmlSeloOrigemMes(meta) {
+    if (!meta || !meta.fonte) return "";
+    if (meta.fonte === "siaps") {
+      var data = formatarDataSiaps(meta.ajustadoEm);
+      var titulo = data
+        ? "Ajustado com SIAPS em " + data
+        : "Ajustado com SIAPS";
+      return '<span class="pco-mes-selo pco-mes-selo--corrigido" title="' + titulo + '">Corrigido</span>';
+    }
+    if (meta.fonte === "editado") {
+      return '<span class="pco-mes-selo pco-mes-selo--editado" title="Editado manualmente ap\u00F3s ajuste SIAPS">Editado</span>';
+    }
+    return "";
+  }
+
+  function aplicarMetaFonteMes(registroAnterior, opts) {
+    opts = opts || {};
+    if (opts.fonte === "siaps") {
+      return {
+        fonte: "siaps",
+        ajustadoEm: opts.ajustadoEm || new Date().toISOString(),
+      };
+    }
+    if (opts.fonte === "editado") {
+      return {
+        fonte: "editado",
+        ajustadoEm: (registroAnterior && registroAnterior.ajustadoEm) || opts.ajustadoEm || new Date().toISOString(),
+      };
+    }
+    if (opts.origem === "manual" && registroAnterior &&
+        (registroAnterior.fonte === "siaps" || registroAnterior.fonte === "editado")) {
+      return {
+        fonte: "editado",
+        ajustadoEm: registroAnterior.ajustadoEm || new Date().toISOString(),
+      };
+    }
+    return null;
+  }
+
   var NOTA_ESB = {
     versao: "Nota Técnica nº 06/2025",
     pesos: { b1: 2, b2: 2, b3: 2, b4: 1, b5: 2, b6: 1 },
@@ -787,6 +872,14 @@
     TOC_STORAGE_KEY: TOC_STORAGE_KEY,
     PDF_STORAGE_KEY: PDF_STORAGE_KEY,
     UNIDADES: UNIDADES,
+    UNIDADES_IDS: UNIDADES_IDS,
+    obterIdsUnidade: obterIdsUnidade,
+    obterUnidadePorCnes: obterUnidadePorCnes,
+    obterUnidadePorIne: obterUnidadePorIne,
+    normalizarDigitosId: normalizarDigitosId,
+    formatarDataSiaps: formatarDataSiaps,
+    htmlSeloOrigemMes: htmlSeloOrigemMes,
+    aplicarMetaFonteMes: aplicarMetaFonteMes,
     ESC_STORAGE_KEY: ESC_STORAGE_KEY,
     lerStorage: lerStorage,
     lerSessao: lerSessao,

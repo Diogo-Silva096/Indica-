@@ -1,4 +1,4 @@
-var CACHE = "indica-v1.1.1";
+var CACHE = "indica-v1.2.0";
 var ASSETS = [
   "./",
   "./index.html",
@@ -15,6 +15,7 @@ var ASSETS = [
   "./drawers.js",
   "./quadrimestre.js",
   "./pdf-import.js",
+  "./siaps-import.js",
   "./unidade.js",
   "./indicadores-pco.js",
   "./indicadores-toc.js",

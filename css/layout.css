@@ -877,7 +877,7 @@ body.modo-entrada .entrada-link:hover {
   background: var(--white);
   border-top: 2px solid var(--mint);
   padding: 0.35rem 0.5rem calc(0.35rem + env(safe-area-inset-bottom, 0));
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.25rem;
 }
 
@@ -933,7 +933,8 @@ body.modo-app .app-bottom-bar:not([hidden]) {
 }
 
 .pdf-drawer-root,
-.sim-drawer-root {
+.sim-drawer-root,
+.siaps-drawer-root {
   position: fixed;
   inset: 0;
   z-index: 200;
@@ -941,17 +942,20 @@ body.modo-app .app-bottom-bar:not([hidden]) {
 }
 
 .pdf-drawer-root:not([hidden]),
-.sim-drawer-root:not([hidden]) {
+.sim-drawer-root:not([hidden]),
+.siaps-drawer-root:not([hidden]) {
   pointer-events: auto;
 }
 
 .pdf-drawer-root[hidden],
-.sim-drawer-root[hidden] {
+.sim-drawer-root[hidden],
+.siaps-drawer-root[hidden] {
   display: none !important;
 }
 
 .pdf-drawer-overlay,
-.sim-drawer-overlay {
+.sim-drawer-overlay,
+.siaps-drawer-overlay {
   position: absolute;
   inset: 0;
   background: rgba(30, 58, 95, 0.35);
@@ -961,13 +965,15 @@ body.modo-app .app-bottom-bar:not([hidden]) {
 }
 
 .pdf-drawer-root.is-aberto .pdf-drawer-overlay,
-.sim-drawer-root.is-aberto .sim-drawer-overlay {
+.sim-drawer-root.is-aberto .sim-drawer-overlay,
+.siaps-drawer-root.is-aberto .siaps-drawer-overlay {
   opacity: 1;
   pointer-events: auto;
 }
 
 .pdf-drawer,
-.sim-drawer {
+.sim-drawer,
+.siaps-drawer {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -983,7 +989,8 @@ body.modo-app .app-bottom-bar:not([hidden]) {
 }
 
 .pdf-drawer-root.is-aberto .pdf-drawer,
-.sim-drawer-root.is-aberto .sim-drawer {
+.sim-drawer-root.is-aberto .sim-drawer,
+.siaps-drawer-root.is-aberto .siaps-drawer {
   transform: translateY(0);
   opacity: 1;
 }

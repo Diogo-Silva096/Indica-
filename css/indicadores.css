@@ -1167,6 +1167,68 @@ body.modo-app .pdf-banner-status {
   gap: 0.35rem;
 }
 
+.pco-mes-card-top-acoes {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.pco-mes-selo {
+  display: inline-block;
+  padding: 0.12rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.pco-mes-selo--corrigido {
+  color: #0f766e;
+  background: #ccfbf1;
+  border: 1px solid rgba(15, 118, 110, 0.25);
+}
+
+.pco-mes-selo--editado {
+  color: #9a3412;
+  background: #ffedd5;
+  border: 1px solid rgba(154, 52, 18, 0.25);
+}
+
+.siaps-sigtap-aviso {
+  margin: 0 0 1rem;
+}
+
+.siaps-sigtap-aviso-acoes {
+  margin: 0.65rem 0 0;
+}
+
+.siaps-sigtap-editar {
+  appearance: none;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  border-radius: 8px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.siaps-sigtap-editar:hover {
+  background: rgba(30, 64, 175, 0.08);
+}
+
+.b5-form.is-siaps-bloqueado .b5-item-input,
+.b5-form.is-siaps-bloqueado .b6-item-input,
+.b3-form.is-siaps-bloqueado .b3-campo-input {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
 .pco-mes-card-editar {
   flex-shrink: 0;
   margin: 0;

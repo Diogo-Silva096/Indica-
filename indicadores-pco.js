@@ -111,7 +111,7 @@
       return Object.keys(meses).map(Number).filter(function (m) { return m >= 1 && m <= 4; }).sort(function (a, b) { return a - b; });
     }
 
-    function salvarMesPco(mes, primeiras, mesCalendario, ano) {
+    function salvarMesPco(mes, primeiras, mesCalendario, ano, opts) {
       var todos = lerPcoStorage();
       if (!todos[pcoUnidadeId]) todos[pcoUnidadeId] = {};
       var unidade = todos[pcoUnidadeId];
@@ -119,10 +119,17 @@
       var val = ESB.validarQuadrimestreParaSalvar(unidade, mesCalendario, ano, tocQuad);
       if (!val.ok) return val;
 
-      unidade[mes] = {
+      var anterior = unidade[mes] || null;
+      var registro = {
         primeiras: primeiras,
         atualizadoEm: new Date().toISOString(),
       };
+      var meta = ESB.aplicarMetaFonteMes(anterior, opts);
+      if (meta) {
+        registro.fonte = meta.fonte;
+        registro.ajustadoEm = meta.ajustadoEm;
+      }
+      unidade[mes] = registro;
       if (mesCalendario && ano) ESB.aplicarMetaQuad(unidade, mesCalendario, ano);
       gravarPcoStorage(todos);
       return { ok: true };
@@ -166,7 +173,7 @@
       var comp = typeof resolverCompetenciaSalvar === "function"
         ? resolverCompetenciaSalvar(pcoUnidadeId, mes)
         : { mes: null, ano: null };
-      var res = salvarMesPco(mes, val, comp.mes, comp.ano);
+      var res = salvarMesPco(mes, val, comp.mes, comp.ano, { origem: "manual" });
       if (!res.ok) {
         window.alert(
           (ESB && ESB.mensagemParaAlerta)
@@ -259,9 +266,14 @@
         html += '<div class="' + cardClass + '"' + cardCor + ' data-mes="' + mes + '" role="tab" aria-selected="' + (ativo ? "true" : "false") + '" tabindex="' + (ativo ? "0" : "-1") + '">';
         html += '  <div class="pco-mes-card-top">';
         html += '    <p class="pco-mes-card-titulo">' + PCO_MESES_LABEL[mes - 1] + "</p>";
+        html += '    <div class="pco-mes-card-top-acoes">';
+        if (registro && !editando) {
+          html += ESB.htmlSeloOrigemMes(registro);
+        }
         if (ativo && !editando) {
           html += '    <button type="button" class="pco-mes-card-editar">Editar</button>';
         }
+        html += "    </div>";
         html += "  </div>";
 
         if (editando) {

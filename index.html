@@ -10,7 +10,7 @@
   <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" sizes="180x180">
-  <link rel="stylesheet" href="styles.css?v=1.1.1">
+  <link rel="stylesheet" href="styles.css?v=1.2.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
@@ -57,13 +57,13 @@
             <label for="unidade-select" class="entrada-label">Unidade de atendimento</label>
             <select id="unidade-select" required>
               <option value="" disabled selected>Escolha uma unidade...</option>
-              <option value="2824">Sede 1</option>
-              <option value="2045">Sede 2</option>
-              <option value="1710">LAPA</option>
-              <option value="2174">Pirituba</option>
-              <option value="1282">Caetano</option>
-              <option value="1147">Barro Vermelho</option>
-              <option value="561">Extremas</option>
+              <option value="2824" data-cnes="2478455" data-ine="0001873628">Sede 1</option>
+              <option value="2045" data-cnes="7629192" data-ine="0002316323">Sede 2</option>
+              <option value="1710" data-cnes="2478447" data-ine="0001873652">LAPA</option>
+              <option value="2174" data-cnes="2478463" data-ine="0001873644">Pirituba</option>
+              <option value="1282" data-cnes="2724812" data-ine="0001873636">Caetano</option>
+              <option value="1147" data-cnes="2724693" data-ine="0002475499">Barro Vermelho</option>
+              <option value="561" data-cnes="2725037" data-ine="0002385996">Extremas</option>
             </select>
           </div>
 
@@ -89,6 +89,10 @@
         <button type="button" class="sidebar-item sidebar-item--nota" id="nav-simulador" aria-expanded="false" aria-controls="sim-drawer" hidden>
           <svg class="sidebar-item-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
           <span class="sidebar-item-label">Nota final</span>
+        </button>
+        <button type="button" class="sidebar-item sidebar-item--siaps" id="sidebar-siaps" aria-expanded="false" aria-controls="siaps-drawer" hidden>
+          <svg class="sidebar-item-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <span class="sidebar-item-label">Conferência SIAPS</span>
         </button>
       </nav>
       <div class="sidebar-rodape" id="unidade-ativa" hidden>
@@ -321,6 +325,16 @@
               <div class="pco-meses-grid" id="b5-meses-grid" role="tablist" aria-label="Meses do quadrimestre — procedimentos preventivos"></div>
             </section>
 
+            <div class="dash-alerta dash-alerta--info siaps-sigtap-aviso" id="b5-siaps-aviso" hidden role="status">
+              <span class="dash-alerta-icone" aria-hidden="true">ⓘ</span>
+              <div class="dash-alerta-corpo">
+                <p class="dash-alerta-texto">O SIAPS não detalha por código. Mantivemos os SIGTAPs do relatório e-SUS para consulta. O indicador do mês usa os totais oficiais do SIAPS — os campos ficam bloqueados para não sobrescrever a correção.</p>
+                <p class="siaps-sigtap-aviso-acoes">
+                  <button type="button" class="siaps-sigtap-editar" data-siaps-editar="b5">Editar manualmente</button>
+                </p>
+              </div>
+            </div>
+
             <form class="b5-form" id="b5-form">
               <div class="b5-filtro">
                 <label class="b5-filtro-toggle">
@@ -392,6 +406,16 @@
               </div>
               <div class="pco-meses-grid" id="b6-meses-grid" role="tablist" aria-label="Meses do quadrimestre — TRA/ART"></div>
             </section>
+
+            <div class="dash-alerta dash-alerta--info siaps-sigtap-aviso" id="b6-siaps-aviso" hidden role="status">
+              <span class="dash-alerta-icone" aria-hidden="true">ⓘ</span>
+              <div class="dash-alerta-corpo">
+                <p class="dash-alerta-texto">O SIAPS não detalha por código. Mantivemos os SIGTAPs do relatório e-SUS para consulta. O indicador do mês usa os totais oficiais do SIAPS — os campos ficam bloqueados para não sobrescrever a correção.</p>
+                <p class="siaps-sigtap-aviso-acoes">
+                  <button type="button" class="siaps-sigtap-editar" data-siaps-editar="b6">Editar manualmente</button>
+                </p>
+              </div>
+            </div>
 
             <form class="b5-form" id="b6-form">
 
@@ -465,6 +489,16 @@
               </div>
               <div class="pco-meses-grid" id="b3-meses-grid" role="tablist" aria-label="Meses do quadrimestre — taxa de exodontias"></div>
             </section>
+
+            <div class="dash-alerta dash-alerta--info siaps-sigtap-aviso" id="b3-siaps-aviso" hidden role="status">
+              <span class="dash-alerta-icone" aria-hidden="true">ⓘ</span>
+              <div class="dash-alerta-corpo">
+                <p class="dash-alerta-texto">O SIAPS não detalha por código. Mantivemos os SIGTAPs do relatório e-SUS para consulta. O indicador do mês usa os totais oficiais do SIAPS — os campos ficam bloqueados para não sobrescrever a correção.</p>
+                <p class="siaps-sigtap-aviso-acoes">
+                  <button type="button" class="siaps-sigtap-editar" data-siaps-editar="b3">Editar manualmente</button>
+                </p>
+              </div>
+            </div>
 
             <form class="b3-form" id="b3-form">
               <div class="b3-campos">
@@ -612,6 +646,49 @@
     </aside>
   </div>
 
+  <div class="siaps-drawer-root" id="siaps-drawer-root" hidden>
+    <div class="siaps-drawer-overlay" id="siaps-drawer-overlay" aria-hidden="true"></div>
+    <aside class="siaps-drawer" id="siaps-drawer" role="dialog" aria-modal="true" aria-labelledby="siaps-drawer-titulo">
+      <header class="pdf-drawer-head">
+        <div class="pdf-drawer-head-inicio">
+          <h2 class="pdf-drawer-titulo" id="siaps-drawer-titulo">Conferência SIAPS</h2>
+          <p class="sim-drawer-sub">Importe as planilhas Excel oficiais para corrigir os números do e-SUS na unidade ativa.</p>
+        </div>
+        <button type="button" class="pdf-drawer-fechar siaps-drawer-fechar" id="siaps-drawer-fechar" aria-label="Fechar painel">&times;</button>
+      </header>
+      <div class="pdf-drawer-body siaps-drawer-body">
+        <section class="pdf-import" aria-labelledby="siaps-import-titulo">
+          <div class="pdf-import-card">
+            <div class="pdf-import-head">
+              <span class="pdf-import-icone" aria-hidden="true">&#128202;</span>
+              <div>
+                <h3 class="pdf-import-titulo" id="siaps-import-titulo">Ajuste com planilha SIAPS</h3>
+                <p class="pdf-import-sub">O PDF do e-SUS continua sendo a produção. Aqui você envia o <strong>Excel do SIAPS</strong> (Relatório Qualidade) para corrigir divergências na <strong>mesma competência</strong> do relatório e-SUS.</p>
+              </div>
+            </div>
+            <p class="siaps-ajuda">A competência é a mesma do Relatório PDF. Você pode enviar as 5 planilhas de uma vez ou uma por uma.</p>
+            <div class="pdf-import-controles">
+              <div class="pdf-campo">
+                <span class="pdf-campo-label">Competência (e-SUS)</span>
+                <p class="siaps-competencia" id="siaps-competencia" aria-live="polite">—</p>
+              </div>
+              <div class="pdf-campo pdf-campo--file">
+                <label for="siaps-file">Planilha(s) Excel SIAPS</label>
+                <input type="file" id="siaps-file" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" multiple>
+              </div>
+            </div>
+            <p class="pdf-status" id="siaps-status" hidden role="status"></p>
+            <div id="siaps-preview" class="siaps-preview" hidden></div>
+            <div class="siaps-acoes">
+              <button type="button" class="btn btn-calc pdf-btn" id="siaps-aplicar" hidden>Aplicar correções</button>
+              <button type="button" class="btn siaps-btn-limpar" id="siaps-limpar">Limpar sessão</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </aside>
+  </div>
+
   <nav class="app-bottom-bar" id="app-bottom-bar" aria-label="Navegação mobile" hidden>
     <a href="#indicadores" class="bottom-bar-item is-active" id="bottom-indicadores">
       <svg class="bottom-bar-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
@@ -626,6 +703,10 @@
       <svg class="bottom-bar-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
       <span>Nota final</span>
     </button>
+    <button type="button" class="bottom-bar-item bottom-bar-item--siaps" id="bottom-siaps" aria-expanded="false" aria-controls="siaps-drawer" hidden>
+      <svg class="bottom-bar-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span>SIAPS</span>
+    </button>
   </nav>
 
   <footer class="footer">
@@ -634,17 +715,19 @@
   </footer>
   <script src="version.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="simulador-core.js"></script>
   <script src="drawers.js"></script>
   <script src="simulador-ui.js"></script>
   <script src="quadrimestre.js"></script>
   <script src="pdf-import.js"></script>
+  <script src="siaps-import.js?v=1.2.0"></script>
   <script src="unidade.js"></script>
   <script src="indicadores-pco.js"></script>
   <script src="indicadores-toc.js"></script>
   <script src="indicadores-escovacao.js"></script>
   <script src="indicadores-b456.js"></script>
-  <script src="indicadores.js?v=1.1.1"></script>
+  <script src="indicadores.js?v=1.2.0"></script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function () {

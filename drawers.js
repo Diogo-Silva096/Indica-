@@ -20,7 +20,7 @@
 
     function aoAbrir(origem) {
       gatilho = origem || document.activeElement;
-      var fechar = drawerPainel && drawerPainel.querySelector(".sim-drawer-fechar, .pdf-drawer-fechar");
+      var fechar = drawerPainel && drawerPainel.querySelector(".sim-drawer-fechar, .pdf-drawer-fechar, .siaps-drawer-fechar");
       window.requestAnimationFrame(function () {
         if (fechar) fechar.focus();
         else if (drawerPainel) {
@@ -61,6 +61,11 @@
     var simResultadosVisivel = false;
     var simFoco = criarControleFoco(ctx.simDrawer);
     var pdfFoco = criarControleFoco(ctx.pdfDrawer);
+    var siapsFoco = criarControleFoco(ctx.siapsDrawer);
+
+    function getSiapsVisivel() {
+      return ctx.getSiapsVisivel ? !!ctx.getSiapsVisivel() : false;
+    }
 
     function isSimAberto() {
       return simResultadosVisivel;
@@ -68,7 +73,8 @@
 
     function syncDrawerNav() {
       var pdfVisivel = ctx.getPdfVisivel();
-      var algumAberto = pdfVisivel || simResultadosVisivel;
+      var siapsVisivel = getSiapsVisivel();
+      var algumAberto = pdfVisivel || simResultadosVisivel || siapsVisivel;
       document.body.classList.toggle("drawer-aberto", algumAberto);
 
       [ctx.navIndicadores, ctx.bottomIndicadores].forEach(function (el) {
@@ -83,6 +89,11 @@
         if (!btn) return;
         btn.setAttribute("aria-expanded", pdfVisivel ? "true" : "false");
         btn.classList.toggle("is-active", pdfVisivel);
+      });
+      [ctx.sidebarSiapsBtn, ctx.bottomSiapsBtn].forEach(function (btn) {
+        if (!btn) return;
+        btn.setAttribute("aria-expanded", siapsVisivel ? "true" : "false");
+        btn.classList.toggle("is-active", siapsVisivel);
       });
     }
 
@@ -111,10 +122,15 @@
       simAtualizarDrawer();
     }
 
+    function fecharSiapsSilencioso() {
+      if (ctx.siapsFecharDrawer) ctx.siapsFecharDrawer({ silencioso: true });
+    }
+
     function simAbrirDrawer(origem) {
       if (!ctx.unidadeSelect.value) return;
       ctx.setPdfVisivel(false);
       ctx.pdfFecharDrawer({ silencioso: true });
+      fecharSiapsSilencioso();
       simResultadosVisivel = true;
       simRenderizarDrawer();
       ctx.pdfAtualizarDrawer();
@@ -135,16 +151,35 @@
 
     function fecharTodos() {
       simFecharDrawer();
+      fecharSiapsSilencioso();
     }
 
     function pdfNotificarAberto(origem) {
       simFecharDrawer();
+      fecharSiapsSilencioso();
       pdfFoco.aoAbrir(origem);
+      syncDrawerNav();
     }
 
     function pdfNotificarFechado(opts) {
       opts = opts || {};
       if (!opts.silencioso) pdfFoco.aoFechar();
+      syncDrawerNav();
+    }
+
+    function siapsNotificarAberto(origem) {
+      simFecharDrawer();
+      if (ctx.setPdfVisivel) ctx.setPdfVisivel(false);
+      if (ctx.pdfFecharDrawer) ctx.pdfFecharDrawer({ silencioso: true });
+      if (ctx.pdfAtualizarDrawer) ctx.pdfAtualizarDrawer();
+      siapsFoco.aoAbrir(origem);
+      syncDrawerNav();
+    }
+
+    function siapsNotificarFechado(opts) {
+      opts = opts || {};
+      if (!opts.silencioso) siapsFoco.aoFechar();
+      syncDrawerNav();
     }
 
     function registrarEventos() {
@@ -174,11 +209,13 @@
         if (e.key === "Tab") {
           if (simResultadosVisivel) simFoco.aoTecla(e);
           else if (ctx.getPdfVisivel()) pdfFoco.aoTecla(e);
+          else if (getSiapsVisivel()) siapsFoco.aoTecla(e);
           return;
         }
         if (e.key !== "Escape") return;
         if (simResultadosVisivel) simFecharDrawer();
         else if (ctx.getPdfVisivel()) ctx.pdfFecharDrawer();
+        else if (getSiapsVisivel() && ctx.siapsFecharDrawer) ctx.siapsFecharDrawer();
       });
     }
 
@@ -192,6 +229,8 @@
       fecharTodos: fecharTodos,
       pdfNotificarAberto: pdfNotificarAberto,
       pdfNotificarFechado: pdfNotificarFechado,
+      siapsNotificarAberto: siapsNotificarAberto,
+      siapsNotificarFechado: siapsNotificarFechado,
       registrarEventos: registrarEventos,
     };
   }

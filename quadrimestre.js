@@ -15,6 +15,9 @@
         var b5MesesGrid = document.getElementById("b5-meses-grid");
         var b6MesesGrid = document.getElementById("b6-meses-grid");
         var b3MesesGrid = document.getElementById("b3-meses-grid");
+        var b5SiapsAviso = document.getElementById("b5-siaps-aviso");
+        var b6SiapsAviso = document.getElementById("b6-siaps-aviso");
+        var b3SiapsAviso = document.getElementById("b3-siaps-aviso");
         
         var b5MesAtual = 1;
         var b5MesOverride = null;
@@ -149,7 +152,7 @@
           if (!dados.b3.cur) dados.b3.cur = { itens: [], total: 0 };
         }
         
-        function pdfEspelharQtdsEntreIndicadores(dados, mapaQtds, origemInd) {
+        function pdfEspelharQtdsEntreIndicadores(dados, mapaQtds, origemInd, registro) {
           if (!dados || !mapaQtds) return;
           pdfGarantirEstruturaDados(dados);
           var cat = pdfCatalogoCruzado();
@@ -158,6 +161,8 @@
             var alvos = cat[k] || [];
             alvos.forEach(function (alvo) {
               if (alvo.ind === origemInd) return;
+              /* Não sobrescrever indicador ainda corrigido pelo SIAPS. */
+              if (registro && pdfOrigemSiapsAtiva(registro, alvo.ind)) return;
               if (alvo.ind === "b5") {
                 dados.b5[alvo.grupo] = pdfDefinirQtdNoGrupo(dados.b5[alvo.grupo], alvo.proc, info.qtd);
               } else if (alvo.ind === "b6") {
@@ -222,6 +227,223 @@
           return true;
         }
         
+        /* Mantém SIGTAPs do e-SUS e só atualiza o total oficial do SIAPS. */
+        function pdfGrupoPreservarItensSiaps(grupoAnt, totalNovo) {
+          var t = Number(totalNovo);
+          if (isNaN(t) || t < 0) t = 0;
+          var itens = [];
+          ((grupoAnt && grupoAnt.itens) || []).forEach(function (it) {
+            var cod = it && it.cod != null ? String(it.cod) : "";
+            var nome = (it && it.nome) || "";
+            if (!cod || cod === "\u2014") return;
+            if (/SIAPS/i.test(nome)) return;
+            var qtd = Number(it.qtd);
+            if (isNaN(qtd) || qtd <= 0) return;
+            itens.push({ cod: it.cod, nome: nome, qtd: qtd });
+          });
+          return { itens: itens, total: t };
+        }
+
+        function pdfOrigemSiapsAtiva(registro, chave) {
+          var meta = registro && registro.origemSiaps && registro.origemSiaps[chave];
+          return !!(meta && meta.fonte === "siaps");
+        }
+
+        function atualizarBloqueioFormSiaps(chave, registro) {
+          var bloquear = pdfOrigemSiapsAtiva(registro, chave);
+          if (chave === "b5" && b5Form) {
+            b5Form.classList.toggle("is-siaps-bloqueado", bloquear);
+            b5Form.querySelectorAll(".b5-item-input").forEach(function (inp) {
+              inp.readOnly = bloquear;
+            });
+          } else if (chave === "b6" && b6Form) {
+            b6Form.classList.toggle("is-siaps-bloqueado", bloquear);
+            b6Form.querySelectorAll(".b6-item-input").forEach(function (inp) {
+              inp.readOnly = bloquear;
+            });
+          } else if (chave === "b3" && b3Form) {
+            b3Form.classList.toggle("is-siaps-bloqueado", bloquear);
+            b3Form.querySelectorAll(".b3-campo-input").forEach(function (inp) {
+              inp.readOnly = bloquear;
+            });
+          }
+        }
+
+        function atualizarAvisoSiapsSigtap(el, registro, chave) {
+          if (!el) return;
+          var mostrar = pdfOrigemSiapsAtiva(registro, chave);
+          el.hidden = !mostrar;
+          atualizarBloqueioFormSiaps(chave, registro);
+        }
+
+        function liberarEdicaoManualSiaps(chave) {
+          var pos = chave === "b5" ? b5MesAtual : chave === "b6" ? b6MesAtual : b3MesAtual;
+          var registro = pdfObterRegistroMesQuad(pos);
+          if (!pdfOrigemSiapsAtiva(registro, chave)) return;
+
+          var msg = chave === "b3"
+            ? "Isso libera a edi\u00E7\u00E3o deste indicador e o selo passa a Editado. O total oficial do SIAPS deixa de valer at\u00E9 voc\u00EA corrigir de novo na Confer\u00EAncia SIAPS. Continuar?"
+            : "Isso libera a edi\u00E7\u00E3o e o indicador passa a usar a soma dos SIGTAPs do formul\u00E1rio (n\u00E3o o total do SIAPS). O selo vira Editado. Continuar?";
+          if (!window.confirm(msg)) return;
+
+          pdfMarcarEditadoAposSiaps(registro, chave);
+          registro.editadoEm = new Date().toISOString();
+
+          if (chave === "b5") {
+            /* Grava a soma do formulário no lugar do total SIAPS. */
+            var novoNum5 = pdfColetarGrupoDoForm(B5_PREVENTIVOS, "b5");
+            var novoOut5 = pdfColetarGrupoDoForm(B5_OUTROS, "b5");
+            registro.dados.b5 = { num: novoNum5, out: novoOut5 };
+            var mapa5 = pdfMapaQtdsDasListas(
+              { num: B5_PREVENTIVOS, out: B5_OUTROS },
+              registro.dados.b5
+            );
+            pdfEspelharQtdsEntreIndicadores(registro.dados, mapa5, "b5", registro);
+            if (!pdfAposPersistirEdicao(registro)) return;
+            pdfAtualizarFormsAposSyncCruzado(registro, "b5", b5MesAtual);
+            atualizarUiB5AposPreenchimento();
+          } else if (chave === "b6") {
+            var novoNum6 = pdfColetarGrupoDoForm(B6_TRA, "b6");
+            var novoOut6 = pdfColetarGrupoDoForm(B6_OUTROS, "b6");
+            registro.dados.b6 = { num: novoNum6, out: novoOut6 };
+            var mapa6 = pdfMapaQtdsDasListas(
+              { num: B6_TRA, out: B6_OUTROS },
+              registro.dados.b6
+            );
+            pdfEspelharQtdsEntreIndicadores(registro.dados, mapa6, "b6", registro);
+            if (!pdfAposPersistirEdicao(registro)) return;
+            pdfAtualizarFormsAposSyncCruzado(registro, "b6", b6MesAtual);
+            atualizarUiB6AposPreenchimento();
+          } else {
+            if (!pdfAposPersistirEdicao(registro)) return;
+            atualizarUiB3AposPreenchimento();
+          }
+        }
+
+        function pdfGarantirRegistroMesSiaps(mesCal, ano) {
+          if (!quadUnidadeId || !mesCal || !ano) return null;
+          var store = pdfLerStore();
+          if (!store[quadUnidadeId]) store[quadUnidadeId] = {};
+          var registro = store[quadUnidadeId][mesCal];
+          if (registro && registro.dados) return registro;
+
+          registro = {
+            ano: ano,
+            mes: mesCal,
+            importadoEm: new Date().toISOString(),
+            populacao: populacaoAtual,
+            dados: {
+              pcoPrimeiras: null,
+              tocConcluido: null,
+              b5: { num: { itens: [], total: 0 }, out: { itens: [], total: 0 } },
+              b6: { num: { itens: [], total: 0 }, out: { itens: [], total: 0 } },
+              b3: {
+                exo: { itens: [], total: 0 },
+                prev: { itens: [], total: 0 },
+                cur: { itens: [], total: 0 },
+              },
+              diagnostico: { origem: "siaps" },
+            },
+            arquivo: { nome: "Ajuste SIAPS" },
+            versoes: [],
+            origemSiaps: {},
+          };
+          store[quadUnidadeId][mesCal] = registro;
+          pdfSalvarComFallback(store, registro);
+          return registro;
+        }
+
+        function pdfMarcarOrigemSiaps(registro, chave, fonte, ajustadoEm) {
+          if (!registro.origemSiaps) registro.origemSiaps = {};
+          registro.origemSiaps[chave] = {
+            fonte: fonte || "siaps",
+            ajustadoEm: ajustadoEm || new Date().toISOString(),
+          };
+        }
+
+        function pdfAplicarAjusteSiaps(mesCal, ano, ajuste) {
+          if (!quadUnidadeId || !mesCal || !ano || !ajuste) return { ok: false, mensagem: "Dados incompletos para aplicar SIAPS." };
+          var registro = pdfGarantirRegistroMesSiaps(mesCal, ano);
+          if (!registro || !registro.dados) return { ok: false, mensagem: "N\u00E3o foi poss\u00EDvel gravar o m\u00EAs no relat\u00F3rio." };
+
+          var d = registro.dados;
+          var agora = ajuste.ajustadoEm || new Date().toISOString();
+          var chave = ajuste.indicador;
+
+          if (chave === "pco" && typeof ajuste.numerador === "number") {
+            d.pcoPrimeiras = ajuste.numerador;
+            pdfMarcarOrigemSiaps(registro, "pco", "siaps", agora);
+          } else if (chave === "toc") {
+            if (typeof ajuste.numerador === "number") d.tocConcluido = ajuste.numerador;
+            if (typeof ajuste.denominador === "number") d.pcoPrimeiras = ajuste.denominador;
+            pdfMarcarOrigemSiaps(registro, "toc", "siaps", agora);
+            if (typeof ajuste.denominador === "number") pdfMarcarOrigemSiaps(registro, "pco", "siaps", agora);
+          } else if (chave === "b5" && typeof ajuste.numerador === "number" && typeof ajuste.denominador === "number") {
+            var out5 = Math.max(0, ajuste.denominador - ajuste.numerador);
+            d.b5 = {
+              num: pdfGrupoPreservarItensSiaps(d.b5 && d.b5.num, ajuste.numerador),
+              out: pdfGrupoPreservarItensSiaps(d.b5 && d.b5.out, out5),
+            };
+            pdfMarcarOrigemSiaps(registro, "b5", "siaps", agora);
+          } else if (chave === "b6" && typeof ajuste.numerador === "number" && typeof ajuste.denominador === "number") {
+            var out6 = Math.max(0, ajuste.denominador - ajuste.numerador);
+            d.b6 = {
+              num: pdfGrupoPreservarItensSiaps(d.b6 && d.b6.num, ajuste.numerador),
+              out: pdfGrupoPreservarItensSiaps(d.b6 && d.b6.out, out6),
+            };
+            pdfMarcarOrigemSiaps(registro, "b6", "siaps", agora);
+          } else if (chave === "b3" && typeof ajuste.numerador === "number" && typeof ajuste.denominador === "number") {
+            var exo = ajuste.numerador;
+            var resto = Math.max(0, ajuste.denominador - exo);
+            var prevAnt = (d.b3 && d.b3.prev && d.b3.prev.total) || 0;
+            var curAnt = (d.b3 && d.b3.cur && d.b3.cur.total) || 0;
+            var somaAnt = prevAnt + curAnt;
+            var prev = resto;
+            var cur = 0;
+            if (somaAnt > 0 && resto > 0) {
+              prev = Math.round(resto * (prevAnt / somaAnt));
+              cur = Math.max(0, resto - prev);
+            }
+            d.b3 = {
+              exo: pdfGrupoPreservarItensSiaps(d.b3 && d.b3.exo, exo),
+              prev: pdfGrupoPreservarItensSiaps(d.b3 && d.b3.prev, prev),
+              cur: pdfGrupoPreservarItensSiaps(d.b3 && d.b3.cur, cur),
+            };
+            pdfMarcarOrigemSiaps(registro, "b3", "siaps", agora);
+          } else {
+            return { ok: false, mensagem: "Indicador SIAPS n\u00E3o reconhecido para aplica\u00E7\u00E3o." };
+          }
+
+          registro.editadoEm = agora;
+          if (!pdfAposPersistirEdicao(registro)) {
+            return { ok: false, mensagem: "Falha ao salvar o ajuste no relat\u00F3rio." };
+          }
+
+          var pos = ESB.quadPosicaoNoMes(mesCal);
+          if (chave === "b5") {
+            b5MesAtual = pos;
+            pdfPreencherB5DeRegistro(registro);
+          } else if (chave === "b6") {
+            b6MesAtual = pos;
+            pdfPreencherB6DeRegistro(registro);
+          } else if (chave === "b3") {
+            b3MesAtual = pos;
+            pdfPreencherB3DeRegistro(registro);
+          }
+          atualizarPaineisQuadB456(quadUnidadeId);
+          return { ok: true, registro: registro };
+        }
+
+        function pdfMarcarEditadoAposSiaps(registro, chave) {
+          if (!registro || !registro.origemSiaps || !registro.origemSiaps[chave]) return;
+          var ant = registro.origemSiaps[chave];
+          if (ant.fonte !== "siaps" && ant.fonte !== "editado") return;
+          registro.origemSiaps[chave] = {
+            fonte: "editado",
+            ajustadoEm: ant.ajustadoEm || new Date().toISOString(),
+          };
+        }
+
         function pdfSincronizarPcoTocEditados(posMes, primeiras, concluidos) {
           if (preenchendoFormulario || !quadUnidadeId) return false;
           var registro = pdfObterRegistroMesQuad(posMes);
@@ -232,11 +454,13 @@
               registro.dados.pcoPrimeiras !== primeiras) {
             registro.dados.pcoPrimeiras = primeiras;
             mudou = true;
+            pdfMarcarEditadoAposSiaps(registro, "pco");
           }
           if (typeof concluidos === "number" && !isNaN(concluidos) && concluidos >= 0 &&
               registro.dados.tocConcluido !== concluidos) {
             registro.dados.tocConcluido = concluidos;
             mudou = true;
+            pdfMarcarEditadoAposSiaps(registro, "toc");
           }
           if (!mudou) return false;
         
@@ -248,6 +472,7 @@
           if (preenchendoFormulario || !quadUnidadeId) return false;
           var registro = pdfObterRegistroMesQuad(b5MesAtual);
           if (!registro || !registro.dados) return false;
+          if (pdfOrigemSiapsAtiva(registro, "b5")) return false;
         
           var novoNum = pdfColetarGrupoDoForm(B5_PREVENTIVOS, "b5");
           var novoOut = pdfColetarGrupoDoForm(B5_OUTROS, "b5");
@@ -260,7 +485,8 @@
             { num: B5_PREVENTIVOS, out: B5_OUTROS },
             registro.dados.b5
           );
-          pdfEspelharQtdsEntreIndicadores(registro.dados, mapa, "b5");
+          pdfEspelharQtdsEntreIndicadores(registro.dados, mapa, "b5", registro);
+          pdfMarcarEditadoAposSiaps(registro, "b5");
           registro.editadoEm = new Date().toISOString();
           if (!pdfAposPersistirEdicao(registro)) return false;
           pdfAtualizarFormsAposSyncCruzado(registro, "b5", b5MesAtual);
@@ -271,6 +497,7 @@
           if (preenchendoFormulario || !quadUnidadeId) return false;
           var registro = pdfObterRegistroMesQuad(b6MesAtual);
           if (!registro || !registro.dados) return false;
+          if (pdfOrigemSiapsAtiva(registro, "b6")) return false;
         
           var novoNum = pdfColetarGrupoDoForm(B6_TRA, "b6");
           var novoOut = pdfColetarGrupoDoForm(B6_OUTROS, "b6");
@@ -283,7 +510,8 @@
             { num: B6_TRA, out: B6_OUTROS },
             registro.dados.b6
           );
-          pdfEspelharQtdsEntreIndicadores(registro.dados, mapa, "b6");
+          pdfEspelharQtdsEntreIndicadores(registro.dados, mapa, "b6", registro);
+          pdfMarcarEditadoAposSiaps(registro, "b6");
           registro.editadoEm = new Date().toISOString();
           if (!pdfAposPersistirEdicao(registro)) return false;
           pdfAtualizarFormsAposSyncCruzado(registro, "b6", b6MesAtual);
@@ -294,6 +522,7 @@
           if (preenchendoFormulario || !quadUnidadeId) return false;
           var registro = pdfObterRegistroMesQuad(b3MesAtual);
           if (!registro || !registro.dados || !registro.dados.b3) return false;
+          if (pdfOrigemSiapsAtiva(registro, "b3")) return false;
         
           var exo = b3InExo ? Number(b3InExo.value) : 0;
           var prev = b3InPrev ? Number(b3InPrev.value) : 0;
@@ -345,7 +574,8 @@
             { exo: B3_EXODONTIAS, prev: B3_PREVENTIVOS, cur: B3_CURATIVOS },
             registro.dados.b3
           );
-          pdfEspelharQtdsEntreIndicadores(registro.dados, mapa, "b3");
+          pdfEspelharQtdsEntreIndicadores(registro.dados, mapa, "b3", registro);
+          pdfMarcarEditadoAposSiaps(registro, "b3");
           registro.editadoEm = new Date().toISOString();
           if (!pdfAposPersistirEdicao(registro)) return false;
           pdfAtualizarFormsAposSyncCruzado(registro, "b3", b3MesAtual);
@@ -461,6 +691,7 @@
         
           var pacote = quadUnidadeId ? obterRegistrosQuadPdf(quadUnidadeId) : null;
           var meses = pacote ? pacote.meses : { 1: null, 2: null, 3: null, 4: null };
+          atualizarAvisoSiapsSigtap(b5SiapsAviso, pacote ? pacote.meses[b5MesAtual] : null, "b5");
         
           if (metForm) {
             renderizarB5MesesGrid(meses, editado ? b5MesAtual : null, editado ? metForm : null);
@@ -495,6 +726,7 @@
         
           var pacote = quadUnidadeId ? obterRegistrosQuadPdf(quadUnidadeId) : null;
           var meses = pacote ? pacote.meses : { 1: null, 2: null, 3: null, 4: null };
+          atualizarAvisoSiapsSigtap(b6SiapsAviso, pacote ? pacote.meses[b6MesAtual] : null, "b6");
         
           if (metForm) {
             renderizarB6MesesGrid(meses, editado ? b6MesAtual : null, editado ? metForm : null);
@@ -531,6 +763,7 @@
         
           var pacote = quadUnidadeId ? obterRegistrosQuadPdf(quadUnidadeId) : null;
           var meses = pacote ? pacote.meses : { 1: null, 2: null, 3: null, 4: null };
+          atualizarAvisoSiapsSigtap(b3SiapsAviso, pacote ? pacote.meses[b3MesAtual] : null, "b3");
         
           if (metForm) {
             renderizarB3MesesGrid(meses, editado ? b3MesAtual : null, editado ? metForm : null);
@@ -544,25 +777,33 @@
         /* Atualiza metas/grades sem persistir — evita recursão B5↔B6↔B3 no espelhamento. */
         function atualizarUiB5AposPreenchimento() {
           b5MesOverride = null;
-          if (typeof renderizarMetasB5 === "function") renderizarMetasB5();
           var pacote = quadUnidadeId ? obterRegistrosQuadPdf(quadUnidadeId) : null;
           var meses = pacote ? pacote.meses : { 1: null, 2: null, 3: null, 4: null };
+          var reg = pacote ? pacote.meses[b5MesAtual] : null;
+          atualizarAvisoSiapsSigtap(b5SiapsAviso, reg, "b5");
+          var metSiaps = pdfOrigemSiapsAtiva(reg, "b5") ? metricasB5DeDados(reg && reg.dados) : null;
+          if (typeof renderizarMetasB5 === "function") renderizarMetasB5(metSiaps || undefined);
           renderizarB5MesesGrid(meses);
         }
 
         function atualizarUiB6AposPreenchimento() {
           b6MesOverride = null;
-          if (typeof renderizarMetasB6 === "function") renderizarMetasB6();
           var pacote = quadUnidadeId ? obterRegistrosQuadPdf(quadUnidadeId) : null;
           var meses = pacote ? pacote.meses : { 1: null, 2: null, 3: null, 4: null };
+          var reg = pacote ? pacote.meses[b6MesAtual] : null;
+          atualizarAvisoSiapsSigtap(b6SiapsAviso, reg, "b6");
+          var metSiaps = pdfOrigemSiapsAtiva(reg, "b6") ? metricasB6DeDados(reg && reg.dados) : null;
+          if (typeof renderizarMetasB6 === "function") renderizarMetasB6(metSiaps || undefined);
           renderizarB6MesesGrid(meses);
         }
 
         function atualizarUiB3AposPreenchimento() {
           b3MesOverride = null;
-          if (typeof renderizarMetasB3 === "function") renderizarMetasB3();
           var pacote = quadUnidadeId ? obterRegistrosQuadPdf(quadUnidadeId) : null;
           var meses = pacote ? pacote.meses : { 1: null, 2: null, 3: null, 4: null };
+          var reg = pacote ? pacote.meses[b3MesAtual] : null;
+          atualizarAvisoSiapsSigtap(b3SiapsAviso, reg, "b3");
+          if (typeof renderizarMetasB3 === "function") renderizarMetasB3();
           renderizarB3MesesGrid(meses);
         }
 
@@ -619,7 +860,12 @@
             if (met) cls = classificacaoB5PorId(classificarB5(met.pct));
         
             html += '<button type="button" class="' + cardClass + '"' + attrStyleCor(cls ? cls.cor : "") + ' data-mes="' + mes + '" role="tab" aria-selected="' + (ativo ? "true" : "false") + '">';
-            html += '  <p class="pco-mes-card-titulo">' + QUAD_MESES_LABEL[mes - 1] + "</p>";
+            html += '  <div class="pco-mes-card-top">';
+            html += '    <p class="pco-mes-card-titulo">' + QUAD_MESES_LABEL[mes - 1] + "</p>";
+            if (registro && registro.origemSiaps && registro.origemSiaps.b5) {
+              html += ESB.htmlSeloOrigemMes(registro.origemSiaps.b5);
+            }
+            html += "  </div>";
             html += '  <p class="pco-mes-card-label">Procedimentos preventivos neste m\u00EAs</p>';
         
             if (met) {
@@ -661,7 +907,12 @@
             if (met) cls = classificacaoB6PorId(classificarB6(met.pct));
         
             html += '<button type="button" class="' + cardClass + '"' + attrStyleCor(cls ? cls.cor : "") + ' data-mes="' + mes + '" role="tab" aria-selected="' + (ativo ? "true" : "false") + '">';
-            html += '  <p class="pco-mes-card-titulo">' + QUAD_MESES_LABEL[mes - 1] + "</p>";
+            html += '  <div class="pco-mes-card-top">';
+            html += '    <p class="pco-mes-card-titulo">' + QUAD_MESES_LABEL[mes - 1] + "</p>";
+            if (registro && registro.origemSiaps && registro.origemSiaps.b6) {
+              html += ESB.htmlSeloOrigemMes(registro.origemSiaps.b6);
+            }
+            html += "  </div>";
             html += '  <p class="pco-mes-card-label">TRA\u002FART neste m\u00EAs</p>';
         
             if (met) {
@@ -703,7 +954,12 @@
             if (met) cls = classificacaoB3PorId(classificarB3(met.pct));
         
             html += '<button type="button" class="' + cardClass + '"' + attrStyleCor(cls ? cls.cor : "") + ' data-mes="' + mes + '" role="tab" aria-selected="' + (ativo ? "true" : "false") + '">';
-            html += '  <p class="pco-mes-card-titulo">' + QUAD_MESES_LABEL[mes - 1] + "</p>";
+            html += '  <div class="pco-mes-card-top">';
+            html += '    <p class="pco-mes-card-titulo">' + QUAD_MESES_LABEL[mes - 1] + "</p>";
+            if (registro && registro.origemSiaps && registro.origemSiaps.b3) {
+              html += ESB.htmlSeloOrigemMes(registro.origemSiaps.b3);
+            }
+            html += "  </div>";
             html += '  <p class="pco-mes-card-label">Exodontias neste m\u00EAs</p>';
         
             if (met) {
@@ -854,6 +1110,12 @@
           if (b5MesesGrid) renderizarB5MesesGrid(vazio);
           if (b6MesesGrid) renderizarB6MesesGrid(vazio);
           if (b3MesesGrid) renderizarB3MesesGrid(vazio);
+          atualizarBloqueioFormSiaps("b5", null);
+          atualizarBloqueioFormSiaps("b6", null);
+          atualizarBloqueioFormSiaps("b3", null);
+          if (b5SiapsAviso) b5SiapsAviso.hidden = true;
+          if (b6SiapsAviso) b6SiapsAviso.hidden = true;
+          if (b3SiapsAviso) b3SiapsAviso.hidden = true;
         }
 
         function atualizarQuadResetBar(uid) {
@@ -879,6 +1141,7 @@
         api.atualizarResultadoLiveB6 = atualizarResultadoLiveB6;
         api.atualizarResultadoLiveB3 = atualizarResultadoLiveB3;
         api.sincronizarPcoTocEditados = pdfSincronizarPcoTocEditados;
+        api.aplicarAjusteSiaps = pdfAplicarAjusteSiaps;
         api.iniciarQuadPainelsParaUnidade = iniciarQuadPainelsParaUnidade;
         api.limparQuadResumosB456 = limparQuadResumosB456;
         api.atualizarPaineisQuadB456 = atualizarPaineisQuadB456;
@@ -898,6 +1161,12 @@
         };
         api.getQuadUnidadeId = function () { return quadUnidadeId; };
         api.setQuadUnidadeId = function (v) { quadUnidadeId = v || ""; };
+
+        document.querySelectorAll("[data-siaps-editar]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            liberarEdicaoManualSiaps(btn.getAttribute("data-siaps-editar"));
+          });
+        });
       }
     })();
 

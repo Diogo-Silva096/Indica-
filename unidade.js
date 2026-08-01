@@ -81,6 +81,9 @@
         if (!el) return;
         el.hidden = !show;
       });
+      if (typeof env.atualizarNavSiaps === "function") {
+        env.atualizarNavSiaps(unidadeId);
+      }
     }
 
     function setAppShellVisivel(visivel) {
@@ -99,6 +102,11 @@
         if (simDrawerRoot) {
           simDrawerRoot.hidden = true;
           simDrawerRoot.classList.remove("is-aberto");
+        }
+        var siapsRoot = document.getElementById("siaps-drawer-root");
+        if (siapsRoot) {
+          siapsRoot.hidden = true;
+          siapsRoot.classList.remove("is-aberto");
         }
         document.body.classList.remove("drawer-aberto");
       }

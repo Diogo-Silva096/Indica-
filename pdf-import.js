@@ -1043,6 +1043,8 @@
           bottomNota: bottomNota,
           sidebarPdfBtn: sidebarPdfBtn,
           bottomPdfBtn: bottomPdfBtn,
+          sidebarSiapsBtn: document.getElementById("sidebar-siaps"),
+          bottomSiapsBtn: document.getElementById("bottom-siaps"),
           simDrawerRoot: simDrawerRoot,
           simDrawer: simDrawer,
           simDrawerOverlay: simDrawerOverlay,
@@ -1054,6 +1056,13 @@
           pdfAtualizarDrawer: pdfAtualizarDrawer,
           pdfFecharDrawer: pdfFecharDrawer,
           pdfDrawer: pdfDrawer,
+          siapsDrawer: document.getElementById("siaps-drawer"),
+          getSiapsVisivel: function () {
+            return !!(env.siapsApi && env.siapsApi.getVisivel && env.siapsApi.getVisivel());
+          },
+          siapsFecharDrawer: function (opts) {
+            if (env.siapsApi && env.siapsApi.fecharDrawer) env.siapsApi.fecharDrawer(opts);
+          },
         });
         drawers.registrarEventos();
         
@@ -1658,6 +1667,11 @@
         api.atualizarResultadoLiveB3 = atualizarResultadoLiveB3;
         api.sincronizarPcoTocEditados = pdfSincronizarPcoTocEditados;
         api.atualizarAposEscovacao = pdfAtualizarAposEscovacao;
+        api.aplicarAjusteSiaps = function (mesCal, ano, ajuste) {
+          return quadApi && typeof quadApi.aplicarAjusteSiaps === "function"
+            ? quadApi.aplicarAjusteSiaps(mesCal, ano, ajuste)
+            : { ok: false, mensagem: "M\u00F3dulo do quadrimestre indispon\u00EDvel." };
+        };
         api.iniciarQuadPainelsParaUnidade = iniciarQuadPainelsParaUnidade;
         api.limparQuadResumosB456 = limparQuadResumosB456;
         api.resetQuadOverrides = function () { resetQuadOverridesLocal(); };
@@ -1666,6 +1680,18 @@
         api.setResultadosVisivel = function (v) { pdfResultadosVisivel = !!v; };
         api.getDrawerRoot = function () { return pdfDrawerRoot; };
         api.getTemConteudo = function () { return pdfTemConteudo; };
+        api.obterCompetencia = function () {
+          var mes = Number(pdfMesSel && pdfMesSel.value) || 0;
+          var ano = Number(pdfAnoInput && pdfAnoInput.value) || 0;
+          if ((!mes || mes < 1 || mes > 12) && pdfMesExibido) mes = Number(pdfMesExibido) || 0;
+          if ((!ano || ano < 2020) && pdfMesExibido && pdfUnidadeId) {
+            var reg = (pdfLerStore()[pdfUnidadeId] || {})[pdfMesExibido];
+            if (reg && reg.ano) ano = Number(reg.ano) || 0;
+          }
+          if (!ano || ano < 2020) ano = new Date().getFullYear();
+          if (mes >= 1 && mes <= 12 && ano >= 2020 && ano <= 2100) return { mes: mes, ano: ano };
+          return null;
+        };
       }
     })();
 

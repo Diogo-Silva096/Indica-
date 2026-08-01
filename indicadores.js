@@ -37,6 +37,7 @@
   var escApi = null;
   var b456Api = null;
   var pdfApi = null;
+  var siapsApi = null;
   var unidadeApi = null;
 
   var atualizarNavNota = function () {};
@@ -511,6 +512,12 @@
     atualizarResultadoLiveB6 = pdfApi.atualizarResultadoLiveB6;
     atualizarResultadoLiveB3 = pdfApi.atualizarResultadoLiveB3;
     iniciarQuadPainelsParaUnidade = pdfApi.iniciarQuadPainelsParaUnidade;
+
+    if (window.IndicaSiaps && typeof window.IndicaSiaps.install === "function") {
+      env.pdfApi = pdfApi;
+      siapsApi = window.IndicaSiaps.install(env);
+      env.siapsApi = siapsApi;
+    }
   })();
 
   /* ===== Instalar Unidade ===== */
@@ -528,6 +535,9 @@
       setPopulacaoAtual: function (v) { populacaoAtual = v; },
       getDrawers: function () { return drawers; },
       getPdfApi: function () { return pdfApi; },
+      atualizarNavSiaps: function (uid) {
+        if (siapsApi && siapsApi.atualizarNav) siapsApi.atualizarNav(uid);
+      },
       onEntrar: function (ctx) {
         if (pcoCadastrados) pcoCadastrados.value = ctx.populacao;
 
@@ -551,12 +561,17 @@
           iniciarQuadPainelsParaUnidade(ctx.unidadeId);
         }
 
+        if (siapsApi && typeof siapsApi.iniciar === "function") {
+          siapsApi.iniciar(ctx.unidadeId);
+        }
+
         if (quadResetBar) quadResetBar.hidden = false;
         if (typeof atualizarQuadResetBar === "function") atualizarQuadResetBar(ctx.unidadeId);
         if (escApi) escApi.carregarEscovacaoUnidade(ctx.unidadeId);
       },
       onSair: function () {
         if (quadResetBar) quadResetBar.hidden = true;
+        if (siapsApi && siapsApi.iniciar) siapsApi.iniciar("");
       },
     });
 

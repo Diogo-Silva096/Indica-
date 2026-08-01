@@ -713,7 +713,7 @@
     <p>&copy; 2026 <strong class="logo-marca-inline"><span class="logo-indica">INDICA</span><span class="logo-sus" aria-hidden="true"><svg class="logo-sus-icone" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg"><path class="logo-sus-principal" d="M20.5,0h17v20.5H58v17H37.5V58h-17V37.5H0v-17h20.5V0z"/><path class="logo-sus-sombra" d="M37.5,20.5v17H20.5L37.5,20.5z"/></svg></span></strong>. Todos os direitos reservados.</p>
     <p class="footer-versao">Versão <span data-app-versao></span></p>
   </footer>
-  <script src="version.js"></script>
+  <script src="version.js?v=1.2.0"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="simulador-core.js"></script>
@@ -731,7 +731,12 @@
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function () {
-        navigator.serviceWorker.register("sw.js").catch(function () { /* offline opcional */ });
+        navigator.serviceWorker
+          .register("sw.js?v=1.2.0", { updateViaCache: "none" })
+          .then(function (reg) {
+            if (reg && typeof reg.update === "function") reg.update();
+          })
+          .catch(function () { /* offline opcional */ });
       });
     }
   </script>
